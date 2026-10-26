@@ -48,7 +48,7 @@
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
                             Склади
                         </a>
-                        <a asp-controller="Stock" asp-action="Alerts" class="nav-link-custom" style="color: #fca5a5;">
+                        <a asp-controller="Stock" asp-action="Alerts" class="nav-link-custom" style="color: #dc2626; font-weight: 600;">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                             Дефіцит
                         </a>
@@ -68,7 +68,7 @@
 
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <div style="text-align: right;">
-                        <div style="font-size: 0.85rem; font-weight: 600; color: #fff;">@User.Identity.Name</div>
+                        <div style="font-size: 0.85rem; font-weight: 700; color: #0f172a;">@User.Identity.Name</div>
                         <span class="badge-custom @(User.IsInRole("Admin") ? "badge-rose" : User.IsInRole("Storekeeper") ? "badge-amber" : "badge-blue")" style="font-size: 0.65rem; padding: 0.1rem 0.45rem;">
                             @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
                         </span>
@@ -76,7 +76,7 @@
 
                     <form asp-controller="Account" asp-action="Logout" method="post" style="display: inline;">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="btn-wms-outline" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;" title="Вийти">
+                        <button type="submit" class="btn-wms-outline" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;" title="Вийти з системи">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                             Вихід
                         </button>

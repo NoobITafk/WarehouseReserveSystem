@@ -18,7 +18,7 @@
                 @(Model.IsActive ? "Активний" : "В архіві")
             </span>
         </div>
-        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.5rem 0;">@Model.Name</h1>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin: 0 0 0.5rem 0;">@Model.Name</h1>
         <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace;">
             Штрих-код: <strong>@Model.Barcode</strong> · Категорія: <strong style="color: #60a5fa;">@(Model.Category?.Name ?? "Загальне")</strong>
         </div>
@@ -78,7 +78,7 @@
 <div class="details-grid-layout">
     <div class="wms-card" style="padding: 0; overflow: hidden;">
         <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-color);">
-            <h3 style="margin: 0; font-size: 1rem; font-weight: 600; color: #fff;">Адресне розміщення по комірках</h3>
+            <h3 style="margin: 0; font-size: 1rem; font-weight: 600; color: var(--text-main);">Адресне розміщення по комірках</h3>
         </div>
 
         <div class="table-responsive">
@@ -109,10 +109,10 @@
                         var wh = zone?.Warehouse;
 
                         <tr>
-                            <td style="color: #fff; font-weight: 500;">@(wh?.Name ?? "-")</td>
+                            <td style="color: var(--text-main); font-weight: 500;">@(wh?.Name ?? "-")</td>
                             <td><span class="badge-custom badge-blue">@(zone?.Name ?? "-")</span></td>
                             <td>
-                                <span class="sku-badge" style="font-weight: 700; color: #fff;">@(loc?.Code ?? "-")</span>
+                                <span class="sku-badge" style="font-weight: 700; color: var(--text-main);">@(loc?.Code ?? "-")</span>
                             </td>
                             <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary);">
                                 @(s.BatchNumber ?? "Стандартна")
@@ -133,13 +133,13 @@
     <!-- Supplier & Specs -->
     <div style="display: flex; flex-direction: column; gap: 1.25rem;">
         <div class="wms-card">
-            <h3 style="margin: 0 0 1rem 0; font-size: 1rem; font-weight: 600; color: #fff;">Постачальник</h3>
+            <h3 style="margin: 0 0 1rem 0; font-size: 1rem; font-weight: 600; color: var(--text-main);">Постачальник</h3>
             @if (Model.Supplier != null)
             {
                 <div style="display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.85rem;">
                     <div>
                         <div style="color: var(--text-muted); font-size: 0.75rem;">Компанія:</div>
-                        <div style="color: #fff; font-weight: 600;">@Model.Supplier.Name</div>
+                        <div style="color: var(--text-main); font-weight: 600;">@Model.Supplier.Name</div>
                     </div>
                     <div>
                         <div style="color: var(--text-muted); font-size: 0.75rem;">ЄДРПОУ / ІПН:</div>
@@ -163,15 +163,15 @@
         </div>
 
         <div class="wms-card">
-            <h3 style="margin: 0 0 0.75rem 0; font-size: 1rem; font-weight: 600; color: #fff;">Технічні характеристики</h3>
+            <h3 style="margin: 0 0 0.75rem 0; font-size: 1rem; font-weight: 600; color: var(--text-main);">Технічні характеристики</h3>
             <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
                 <div style="display: flex; justify-content: space-between;">
                     <span style="color: var(--text-secondary);">Вага одиниці:</span>
-                    <span style="color: #fff; font-weight: 500;">@Model.WeightKg кг</span>
+                    <span style="color: var(--text-main); font-weight: 500;">@Model.WeightKg кг</span>
                 </div>
                 <div style="display: flex; justify-content: space-between;">
                     <span style="color: var(--text-secondary);">Одиниця виміру:</span>
-                    <span style="color: #fff; font-weight: 500;">@Model.Unit</span>
+                    <span style="color: var(--text-main); font-weight: 500;">@Model.Unit</span>
                 </div>
                 <div style="display: flex; justify-content: space-between;">
                     <span style="color: var(--text-secondary);">Критичний мінімум:</span>

@@ -9,7 +9,7 @@
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.25rem 0;">Каталог матеріальних цінностей (SKU)</h1>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin: 0 0 0.25rem 0;">Каталог матеріальних цінностей (SKU)</h1>
         <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Номенклатура товарів, ціни, артикули та порогові значення запасів</p>
     </div>
 
@@ -89,7 +89,7 @@
                             <div style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 0.2rem;">@p.Barcode</div>
                         </td>
                         <td>
-                            <a asp-action="Details" asp-route-id="@p.Id" style="color: #fff; font-weight: 600; text-decoration: none; font-size: 0.9rem;">
+                            <a asp-action="Details" asp-route-id="@p.Id" style="color: var(--text-main); font-weight: 600; text-decoration: none; font-size: 0.9rem;">
                                 @p.Name
                             </a>
                             @if (!string.IsNullOrWhiteSpace(p.Description))
@@ -116,7 +116,7 @@
                         <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-secondary);">
                             @p.CostPrice.ToString("N2") ₴
                         </td>
-                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; color: #fff;">
+                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; color: var(--text-main);">
                             @p.SellingPrice.ToString("N2") ₴
                         </td>
                         <td>

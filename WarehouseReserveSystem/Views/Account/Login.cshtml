@@ -4,31 +4,31 @@
     Layout = "_Layout";
 }
 
-<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem 1rem;">
     <div style="max-width: 440px; width: 100%;">
         <div style="text-align: center; margin-bottom: 2rem;">
-            <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 14px; color: #fff; margin-bottom: 1rem; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.35);">
+            <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: linear-gradient(135deg, #0f172a 0%, #334155 100%); border-radius: 16px; color: var(--text-main); margin-bottom: 1rem; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
                     <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
                     <line x1="12" y1="22.08" x2="12" y2="12"/>
                 </svg>
             </div>
-            <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.5rem 0; letter-spacing: -0.025em;">WarehouseReserve WMS</h1>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Система адресного складського обліку та контролю залишків</p>
+            <h1 style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin: 0 0 0.5rem 0; letter-spacing: -0.025em;">WarehouseReserve WMS</h1>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Корпоративна платформа логістики та адресного складського обліку</p>
         </div>
 
-        <div class="wms-card" style="padding: 2rem;">
+        <div class="wms-card" style="padding: 2.25rem 2rem;">
             <form asp-action="Login" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="ReturnUrl" />
 
-                <div asp-validation-summary="ModelOnly" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1.25rem;"></div>
+                <div asp-validation-summary="ModelOnly" style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.85rem; margin-bottom: 1.25rem;"></div>
 
                 <div style="margin-bottom: 1.25rem;">
                     <label asp-for="Login" class="wms-label">Логін або Email</label>
                     <input asp-for="Login" id="loginInput" class="wms-input" placeholder="admin" autofocus autocomplete="username" />
-                    <span asp-validation-for="Login" style="color: #f87171; font-size: 0.8rem;"></span>
+                    <span asp-validation-for="Login" style="color: #dc2626; font-size: 0.8rem;"></span>
                 </div>
 
                 <div style="margin-bottom: 1.25rem;">
@@ -44,28 +44,28 @@
                             </svg>
                         </button>
                     </div>
-                    <span asp-validation-for="Password" style="color: #f87171; font-size: 0.8rem;"></span>
+                    <span asp-validation-for="Password" style="color: #dc2626; font-size: 0.8rem;"></span>
                 </div>
 
                 <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <input asp-for="RememberMe" type="checkbox" id="rememberMe" style="accent-color: var(--primary); width: 16px; height: 16px;" />
+                    <input asp-for="RememberMe" type="checkbox" id="rememberMe" style="accent-color: #0f172a; width: 16px; height: 16px;" />
                     <label for="rememberMe" style="font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;">Запам'ятати мене на 14 днів</label>
                 </div>
 
                 <button type="submit" class="btn-wms-primary" style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 0.95rem;">
-                    Увійти в термінал
+                    Увійти в кабінет
                 </button>
             </form>
 
             <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
-                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
-                    Швидкий тестовий доступ (Демо-ролі):
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.85rem;">
+                    Швидкий вхід за 1 клік (Демо-ролі):
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.6rem;">
                     <form asp-action="DemoLogin" method="post" style="margin: 0;">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="role" value="Admin" />
-                        <button type="submit" class="btn-wms-outline" style="width: 100%; justify-content: space-between; font-size: 0.85rem; padding: 0.55rem 0.85rem;">
+                        <button type="submit" class="btn-wms-outline" style="width: 100%; justify-content: space-between; font-size: 0.85rem; padding: 0.65rem 0.95rem;">
                             <span><strong>Олександр Керівник</strong> (Адміністратор)</span>
                             <span class="badge-custom badge-rose">Admin</span>
                         </button>
@@ -73,20 +73,38 @@
                     <form asp-action="DemoLogin" method="post" style="margin: 0;">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="role" value="Storekeeper" />
-                        <button type="submit" class="btn-wms-outline" style="width: 100%; justify-content: space-between; font-size: 0.85rem; padding: 0.55rem 0.85rem;">
+                        <button type="submit" class="btn-wms-outline" style="width: 100%; justify-content: space-between; font-size: 0.85rem; padding: 0.65rem 0.95rem;">
                             <span><strong>Василь Комірник</strong> (Старший комірник)</span>
-                            <span class="badge-custom badge-amber">Store</span>
+                            <span class="badge-custom badge-amber">Storekeeper</span>
                         </button>
                     </form>
                     <form asp-action="DemoLogin" method="post" style="margin: 0;">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="role" value="Auditor" />
-                        <button type="submit" class="btn-wms-outline" style="width: 100%; justify-content: space-between; font-size: 0.85rem; padding: 0.55rem 0.85rem;">
-                            <span><strong>Олена Аудитор</strong> (Фінансовий аудитор)</span>
-                            <span class="badge-custom badge-blue">Audit</span>
+                        <button type="submit" class="btn-wms-outline" style="width: 100%; justify-content: space-between; font-size: 0.85rem; padding: 0.65rem 0.95rem;">
+                            <span><strong>Олена Аудитор</strong> (Фінансовий контролер)</span>
+                            <span class="badge-custom badge-blue">Auditor</span>
                         </button>
                     </form>
                 </div>
+
+                <!-- Collapsible Spoiler with Manual Passwords -->
+                <details style="margin-top: 1.25rem; background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.8rem; color: var(--text-secondary); cursor: pointer;">
+                    <summary style="font-weight: 600; color: #0f172a; outline: none; user-select: none;">
+                        ℹ️ Реквізити для ручного тестування форми
+                    </summary>
+                    <div style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
+                        <div style="background: #ffffff; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border-color);">
+                            <span style="color: #b91c1c; font-weight: 700;">Admin:</span> login: <strong>admin</strong> | pass: <strong>Admin#2026!WMS</strong>
+                        </div>
+                        <div style="background: #ffffff; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border-color);">
+                            <span style="color: #b45309; font-weight: 700;">Storekeeper:</span> login: <strong>storekeeper</strong> | pass: <strong>Storekeeper#2026!WMS</strong>
+                        </div>
+                        <div style="background: #ffffff; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border-color);">
+                            <span style="color: #1d4ed8; font-weight: 700;">Auditor:</span> login: <strong>auditor</strong> | pass: <strong>Auditor#2026!WMS</strong>
+                        </div>
+                    </div>
+                </details>
             </div>
         </div>
     </div>

@@ -9,12 +9,12 @@
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.25rem 0;">Журнал аудиту безпеки та дій користувачів</h1>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin: 0 0 0.25rem 0;">Журнал аудиту безпеки та дій користувачів</h1>
         <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Незмінний аудит-трейл (Audit Trail): фіксація авторизацій, транзакцій та змін статусів</p>
     </div>
 
     <div style="font-size: 0.85rem; color: var(--text-secondary); background: var(--bg-card-subtle); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
-        Зафіксовано подій: <strong style="color: #fff;">@totalItems</strong>
+        Зафіксовано подій: <strong style="color: var(--text-main);">@totalItems</strong>
     </div>
 </div>
 
@@ -55,14 +55,14 @@
                                 @log.Action
                             </span>
                         </td>
-                        <td style="color: #fff; font-weight: 500; font-size: 0.85rem;">
+                        <td style="color: var(--text-main); font-weight: 500; font-size: 0.85rem;">
                             @log.EntityName
                         </td>
                         <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #93c5fd;">
                             @(log.EntityId ?? "-")
                         </td>
                         <td>
-                            <strong style="color: #fff; font-size: 0.85rem;">@log.StaffLogin</strong>
+                            <strong style="color: var(--text-main); font-size: 0.85rem;">@log.StaffLogin</strong>
                         </td>
                         <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted);">
                             @(log.IpAddress ?? "127.0.0.1")

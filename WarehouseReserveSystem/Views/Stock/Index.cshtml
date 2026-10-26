@@ -13,7 +13,7 @@
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.25rem 0;">Залишки матеріальних цінностей</h1>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin: 0 0 0.25rem 0;">Залишки матеріальних цінностей</h1>
         <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Оборотно-сальдова відомість у розрізі адресних комірок та серійних партій</p>
     </div>
 
@@ -69,7 +69,7 @@
 
 <!-- Totals Strip -->
 <div style="display: flex; gap: 2rem; margin-bottom: 1.25rem; font-size: 0.9rem; background: var(--bg-card-subtle); padding: 0.75rem 1.25rem; border-radius: 8px; border: 1px solid var(--border-color); flex-wrap: wrap;">
-    <div>Знайдено записів: <strong style="color: #fff;">@Model.Count</strong></div>
+    <div>Знайдено записів: <strong style="color: var(--text-main);">@Model.Count</strong></div>
     <div>Всього одиниць: <strong style="color: #34d399;">@totalUnits.ToString("N0") од.</strong></div>
     <div>Балансова вартість: <strong style="color: #60a5fa;">@totalValuation.ToString("N2") грн</strong></div>
 </div>
@@ -110,19 +110,19 @@
 
                     <tr>
                         <td>
-                            <span class="sku-badge" style="font-weight: 700; color: #fff; background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3);">
+                            <span class="sku-badge" style="font-weight: 700; color: var(--text-main); background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3);">
                                 @(loc?.Code ?? "-")
                             </span>
                         </td>
                         <td style="font-size: 0.8rem;">
-                            <div style="color: #fff; font-weight: 500;">@(wh?.Code ?? "-")</div>
+                            <div style="color: var(--text-main); font-weight: 500;">@(wh?.Code ?? "-")</div>
                             <div style="color: var(--text-muted);">@(zone?.Name ?? "-")</div>
                         </td>
                         <td>
                             <span class="sku-badge">@(p?.Sku ?? "-")</span>
                         </td>
                         <td>
-                            <a asp-controller="Products" asp-action="Details" asp-route-id="@p?.Id" style="color: #fff; font-weight: 600; text-decoration: none; font-size: 0.9rem;">
+                            <a asp-controller="Products" asp-action="Details" asp-route-id="@p?.Id" style="color: var(--text-main); font-weight: 600; text-decoration: none; font-size: 0.9rem;">
                                 @(p?.Name ?? "-")
                             </a>
                             <div style="font-size: 0.75rem; color: var(--text-muted);">Категорія: @(p?.Category?.Name ?? "-")</div>

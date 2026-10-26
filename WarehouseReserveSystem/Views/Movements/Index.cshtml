@@ -6,7 +6,7 @@
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.25rem 0;">Журнал руху матеріальних цінностей</h1>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin: 0 0 0.25rem 0;">Журнал руху матеріальних цінностей</h1>
         <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Реєстр прибуткових, видаткових накладних та актів переміщення</p>
     </div>
 
@@ -91,11 +91,11 @@
                         <td style="font-size: 0.85rem;">
                             @if (m.Type == StockMovementType.Receipt)
                             {
-                                <span style="color: #fff; font-weight: 500;">@(m.Supplier?.Name ?? "Постачальник")</span>
+                                <span style="color: var(--text-main); font-weight: 500;">@(m.Supplier?.Name ?? "Постачальник")</span>
                             }
                             else if (m.Type == StockMovementType.Shipment)
                             {
-                                <span style="color: #fff; font-weight: 500;">@(m.CustomerName ?? "Клієнт")</span>
+                                <span style="color: var(--text-main); font-weight: 500;">@(m.CustomerName ?? "Клієнт")</span>
                             }
                             else if (m.Type == StockMovementType.Transfer)
                             {
@@ -109,7 +109,7 @@
                         <td style="color: var(--text-main); font-weight: 600; white-space: nowrap;">
                             @totalQty од.
                         </td>
-                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; color: #fff; white-space: nowrap;">
+                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; color: var(--text-main); white-space: nowrap;">
                             @totalSum.ToString("N2") ₴
                         </td>
                         <td style="white-space: nowrap;">
