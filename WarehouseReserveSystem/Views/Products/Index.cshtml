@@ -23,14 +23,14 @@
 </div>
 
 <!-- Filter Bar -->
-<div class="wms-card" style="padding: 1rem; margin-bottom: 1.5rem;">
-    <form method="get" asp-action="Index" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+<div class="wms-card" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+    <form method="get" asp-action="Index" id="filterForm" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
         <div style="flex: 1; min-width: 250px;">
-            <input type="text" name="search" value="@search" placeholder="Пошук за назвою, SKU або штрих-кодом..." class="wms-input" />
+            <input type="text" id="liveSearchInput" name="search" value="@search" placeholder="Миттєвий пошук за назвою, SKU або штрих-кодом..." class="wms-input" />
         </div>
 
         <div style="width: 260px;">
-            <select name="categoryId" class="wms-input">
+            <select name="categoryId" id="categorySelect" class="wms-input" onchange="document.getElementById('filterForm').submit()">
                 <option value="">Всі товарні категорії</option>
                 @foreach (var cat in categories)
                 {
@@ -46,17 +46,26 @@
 
         @if (selectedCat.HasValue || !string.IsNullOrWhiteSpace(search))
         {
-            <a asp-action="Index" class="btn-wms-outline" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3);">
+            <a asp-action="Index" class="btn-wms-outline" style="color: #dc2626; border-color: rgba(220, 38, 38, 0.3);">
                 Скинути
             </a>
         }
     </form>
+
+    <!-- Quick Filter Chips -->
+    <div class="filter-pills-container" style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
+        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Швидкі фільтри:</span>
+        <button type="button" class="filter-pill active" onclick="filterProducts('all', this)">Всі товари (@Model.Count)</button>
+        <button type="button" class="filter-pill" onclick="filterProducts('lowstock', this)">⚠️ Дефіцит</button>
+        <button type="button" class="filter-pill" onclick="filterProducts('instock', this)">📦 В наявності</button>
+        <button type="button" class="filter-pill" onclick="filterProducts('active', this)">✅ Тільки активні</button>
+    </div>
 </div>
 
 <!-- Products Table -->
 <div class="wms-card" style="padding: 0; overflow: hidden;">
     <div class="table-responsive">
-        <table class="wms-table">
+        <table class="wms-table" id="productsTable">
             <thead>
                 <tr>
                     <th>Артикул / Штрих-код</th>
@@ -83,7 +92,13 @@
                     var totalStock = p.StockItems.Sum(s => s.Quantity);
                     var isLowStock = totalStock <= p.MinStockThreshold;
 
-                    <tr>
+                    <tr class="clickable-row product-row" 
+                        data-href="@Url.Action("Details", "Products", new { id = p.Id })"
+                        data-category="@p.CategoryId"
+                        data-lowstock="@isLowStock.ToString().ToLower()"
+                        data-instock="@(totalStock > 0 ? "true" : "false")"
+                        data-active="@p.IsActive.ToString().ToLower()"
+                        title="Натисніть на рядок для відкриття картки товару">
                         <td>
                             <div class="sku-badge">@p.Sku</div>
                             <div style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 0.2rem;">@p.Barcode</div>
@@ -110,7 +125,7 @@
                             </span>
                             @if (isLowStock)
                             {
-                                <div style="font-size: 0.7rem; color: #f87171; margin-top: 0.2rem;">Мін: @p.MinStockThreshold @p.Unit</div>
+                                <div style="font-size: 0.7rem; color: #dc2626; margin-top: 0.2rem; font-weight: 600;">Мін: @p.MinStockThreshold @p.Unit</div>
                             }
                         </td>
                         <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-secondary);">
@@ -132,7 +147,7 @@
                         <td class="actions-cell">
                             <div style="display: inline-flex; gap: 0.4rem; justify-content: flex-end;">
                                 <a asp-action="Details" asp-route-id="@p.Id" class="btn-wms-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
-                                    Картка
+                                    Картка →
                                 </a>
                                 @if (User.IsInRole("Admin") || User.IsInRole("Storekeeper"))
                                 {
@@ -148,3 +163,39 @@
         </table>
     </div>
 </div>
+
+@section Scripts {
+<script>
+// Client-side quick filter
+function filterProducts(filterType, btn) {
+    document.querySelectorAll('.filter-pills-container .filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+
+    const rows = document.querySelectorAll('.product-row');
+    rows.forEach(r => {
+        let show = true;
+        if (filterType === 'lowstock') {
+            show = r.getAttribute('data-lowstock') === 'true';
+        } else if (filterType === 'instock') {
+            show = r.getAttribute('data-instock') === 'true';
+        } else if (filterType === 'active') {
+            show = r.getAttribute('data-active') === 'true';
+        }
+        r.style.display = show ? '' : 'none';
+    });
+}
+
+// Client-side live search filter on keyup
+const searchInput = document.getElementById('liveSearchInput');
+if (searchInput) {
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('.product-row');
+        rows.forEach(r => {
+            const text = r.textContent.toLowerCase();
+            r.style.display = text.includes(query) ? '' : 'none';
+        });
+    });
+}
+</script>
+}

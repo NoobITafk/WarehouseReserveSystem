@@ -32,14 +32,14 @@
 </div>
 
 <!-- Filter Bar -->
-<div class="wms-card" style="padding: 1rem; margin-bottom: 1.5rem;">
-    <form method="get" asp-action="Index" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+<div class="wms-card" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+    <form method="get" asp-action="Index" id="stockFilterForm" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
         <div style="flex: 1; min-width: 220px;">
-            <input type="text" name="search" value="@search" placeholder="Пошук за товаром, SKU або коміркою (напр. A-01)..." class="wms-input" />
+            <input type="text" id="stockSearchInput" name="search" value="@search" placeholder="Пошук за товаром, SKU або коміркою (напр. A-01)..." class="wms-input" />
         </div>
 
         <div style="width: 240px;">
-            <select name="warehouseId" class="wms-input">
+            <select name="warehouseId" class="wms-input" onchange="document.getElementById('stockFilterForm').submit()">
                 <option value="">Всі складські комплекси</option>
                 @foreach (var wh in warehouses)
                 {
@@ -49,7 +49,7 @@
         </div>
 
         <div style="width: 240px;">
-            <select name="categoryId" class="wms-input">
+            <select name="categoryId" class="wms-input" onchange="document.getElementById('stockFilterForm').submit()">
                 <option value="">Всі категорії</option>
                 @foreach (var cat in categories)
                 {
@@ -62,22 +62,22 @@
 
         @if (selectedWh.HasValue || selectedCat.HasValue || !string.IsNullOrWhiteSpace(search))
         {
-            <a asp-action="Index" class="btn-wms-outline" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3);">Скинути</a>
+            <a asp-action="Index" class="btn-wms-outline" style="color: #dc2626; border-color: rgba(220, 38, 38, 0.3);">Скинути</a>
         }
     </form>
 </div>
 
 <!-- Totals Strip -->
-<div style="display: flex; gap: 2rem; margin-bottom: 1.25rem; font-size: 0.9rem; background: var(--bg-card-subtle); padding: 0.75rem 1.25rem; border-radius: 8px; border: 1px solid var(--border-color); flex-wrap: wrap;">
+<div style="display: flex; gap: 2rem; margin-bottom: 1.25rem; font-size: 0.9rem; background: var(--bg-card-subtle); padding: 0.85rem 1.25rem; border-radius: 10px; border: 1px solid var(--border-color); flex-wrap: wrap;">
     <div>Знайдено записів: <strong style="color: var(--text-main);">@Model.Count</strong></div>
-    <div>Всього одиниць: <strong style="color: #34d399;">@totalUnits.ToString("N0") од.</strong></div>
-    <div>Балансова вартість: <strong style="color: #60a5fa;">@totalValuation.ToString("N2") грн</strong></div>
+    <div>Всього одиниць: <strong style="color: var(--emerald);">@totalUnits.ToString("N0") од.</strong></div>
+    <div>Балансова вартість: <strong style="color: #2563eb;">@totalValuation.ToString("N2") грн</strong></div>
 </div>
 
 <!-- Stock Table -->
 <div class="wms-card" style="padding: 0; overflow: hidden;">
     <div class="table-responsive">
-        <table class="wms-table">
+        <table class="wms-table" id="stockTable">
             <thead>
                 <tr>
                     <th>Адресна комірка</th>
@@ -88,7 +88,7 @@
                     <th>Кількість</th>
                     <th>Собівартість</th>
                     <th>Сума залишку</th>
-                    <th>Оновлено</th>
+                    <th style="text-align: right;">Дії</th>
                 </tr>
             </thead>
             <tbody>
@@ -108,14 +108,14 @@
                     var wh = zone?.Warehouse;
                     var totalLineCost = item.Quantity * (p?.CostPrice ?? 0m);
 
-                    <tr>
+                    <tr class="clickable-row stock-row" data-href="@Url.Action("Details", "Products", new { id = p?.Id })" title="Натисніть для перегляду картки товару">
                         <td>
-                            <span class="sku-badge" style="font-weight: 700; color: var(--text-main); background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3);">
+                            <span class="sku-badge" style="font-weight: 700; color: var(--text-main); background: #eff6ff; border-color: #bfdbfe;">
                                 @(loc?.Code ?? "-")
                             </span>
                         </td>
                         <td style="font-size: 0.8rem;">
-                            <div style="color: var(--text-main); font-weight: 500;">@(wh?.Code ?? "-")</div>
+                            <div style="color: var(--text-main); font-weight: 600;">@(wh?.Code ?? "-")</div>
                             <div style="color: var(--text-muted);">@(zone?.Name ?? "-")</div>
                         </td>
                         <td>
@@ -130,17 +130,19 @@
                         <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary);">
                             @(item.BatchNumber ?? "Стандарт")
                         </td>
-                        <td style="font-weight: 700; color: #34d399; font-size: 0.95rem;">
+                        <td style="font-weight: 700; color: var(--emerald); font-size: 0.95rem;">
                             @item.Quantity @(p?.Unit ?? "шт")
                         </td>
                         <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-secondary);">
                             @((p?.CostPrice ?? 0m).ToString("N2")) ₴
                         </td>
-                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; color: #60a5fa;">
+                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; color: #2563eb;">
                             @totalLineCost.ToString("N2") ₴
                         </td>
-                        <td style="font-size: 0.75rem; color: var(--text-muted);">
-                            @item.LastUpdatedAt.ToString("dd.MM.yyyy HH:mm")
+                        <td class="actions-cell">
+                            <a asp-controller="Products" asp-action="Details" asp-route-id="@p?.Id" class="btn-wms-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
+                                Товар →
+                            </a>
                         </td>
                     </tr>
                 }
@@ -148,3 +150,20 @@
         </table>
     </div>
 </div>
+
+@section Scripts {
+<script>
+// Instant live search filter
+const stockSearch = document.getElementById('stockSearchInput');
+if (stockSearch) {
+    stockSearch.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('.stock-row');
+        rows.forEach(r => {
+            const text = r.textContent.toLowerCase();
+            r.style.display = text.includes(query) ? '' : 'none';
+        });
+    });
+}
+</script>
+}

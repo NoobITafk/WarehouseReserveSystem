@@ -4,22 +4,63 @@
     Layout = "_Layout";
 }
 
-<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem 1rem;">
-    <div style="max-width: 440px; width: 100%;">
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: linear-gradient(135deg, #0f172a 0%, #334155 100%); border-radius: 16px; color: var(--text-main); margin-bottom: 1rem; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);">
+<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;">
+    <div style="max-width: 460px; width: 100%;">
+        <!-- Brand Header -->
+        <div style="text-align: center; margin-bottom: 1.75rem;">
+            <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: linear-gradient(135deg, #0f172a 0%, #334155 100%); border-radius: 16px; color: #ffffff; margin-bottom: 1rem; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
                     <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
                     <line x1="12" y1="22.08" x2="12" y2="12"/>
                 </svg>
             </div>
-            <h1 style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin: 0 0 0.5rem 0; letter-spacing: -0.025em;">WarehouseReserve WMS</h1>
+            <h1 style="font-size: 1.65rem; font-weight: 800; color: #0f172a; margin: 0 0 0.4rem 0; letter-spacing: -0.025em;">WarehouseReserve WMS</h1>
             <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Корпоративна платформа логістики та адресного складського обліку</p>
         </div>
 
-        <div class="wms-card" style="padding: 2.25rem 2rem;">
-            <form asp-action="Login" method="post">
+        <div class="wms-card" style="padding: 2rem 2rem 2.25rem 2rem;">
+            <!-- Interactive Role Switcher Header -->
+            <div style="margin-bottom: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                    <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">
+                        Швидкий вибір ролі (Демо):
+                    </span>
+                    <span id="role-badge" class="badge-custom badge-rose">Admin</span>
+                </div>
+
+                <!-- 3 Segmented Interactive Role Tabs -->
+                <div class="role-switcher-tabs">
+                    <button type="button" class="role-tab-btn active" onclick="selectRole('admin', 'Admin#2026!WMS', 'Admin', 'Олександр Керівник', 'badge-rose', 'Повний контроль WMS: списання, користувачі, фінансовий аудит, налаштування', this)">
+                        <span>👑</span> Керівник
+                    </button>
+                    <button type="button" class="role-tab-btn" onclick="selectRole('storekeeper', 'Storekeeper#2026!WMS', 'Storekeeper', 'Василь Комірник', 'badge-amber', 'Складські операції: оприбуткування, відвантаження, переміщення комірок', this)">
+                        <span>📦</span> Комірник
+                    </button>
+                    <button type="button" class="role-tab-btn" onclick="selectRole('auditor', 'Auditor#2026!WMS', 'Auditor', 'Олена Аудитор', 'badge-blue', 'Фінансовий аудит: оборотно-сальдові відомості, аналітика, експорт CSV', this)">
+                        <span>📊</span> Аудитор
+                    </button>
+                </div>
+
+                <!-- Live Role Context Card -->
+                <div id="role-info-card" class="role-info-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span id="role-user-name" style="font-weight: 700; font-size: 0.85rem; color: #0f172a;">Олександр Керівник</span>
+                        <div style="display: flex; gap: 0.4rem;">
+                            <button type="button" class="copy-badge-btn" onclick="copyLoginCredentials()" title="Скопіювати логін та пароль">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                📋 Копіювати
+                            </button>
+                        </div>
+                    </div>
+                    <div id="role-desc" style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4;">
+                        Повний контроль WMS: списання, користувачі, фінансовий аудит, налаштування
+                    </div>
+                </div>
+            </div>
+
+            <!-- Standard Login Form -->
+            <form id="mainLoginForm" asp-action="Login" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="ReturnUrl" />
 
@@ -27,7 +68,7 @@
 
                 <div style="margin-bottom: 1.25rem;">
                     <label asp-for="Login" class="wms-label">Логін або Email</label>
-                    <input asp-for="Login" id="loginInput" class="wms-input" placeholder="admin" autofocus autocomplete="username" />
+                    <input asp-for="Login" id="loginInput" class="wms-input" value="admin" placeholder="admin" autofocus autocomplete="username" />
                     <span asp-validation-for="Login" style="color: #dc2626; font-size: 0.8rem;"></span>
                 </div>
 
@@ -36,7 +77,7 @@
                         <label asp-for="Password" class="wms-label" style="margin-bottom: 0;">Пароль</label>
                     </div>
                     <div style="position: relative;">
-                        <input asp-for="Password" id="passwordInput" type="password" class="wms-input" style="padding-right: 2.75rem;" placeholder="••••••••" autocomplete="current-password" />
+                        <input asp-for="Password" id="passwordInput" type="password" value="Admin#2026!WMS" class="wms-input" style="padding-right: 2.75rem;" placeholder="••••••••" autocomplete="current-password" />
                         <button type="button" onclick="togglePasswordVisibility()" style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; padding: 0.25rem;" title="Показати/приховати пароль">
                             <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -48,69 +89,82 @@
                 </div>
 
                 <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <input asp-for="RememberMe" type="checkbox" id="rememberMe" style="accent-color: #0f172a; width: 16px; height: 16px;" />
-                    <label for="rememberMe" style="font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;">Запам'ятати мене на 14 днів</label>
+                    <input asp-for="RememberMe" type="checkbox" id="rememberMe" checked style="accent-color: #0f172a; width: 16px; height: 16px; cursor: pointer;" />
+                    <label for="rememberMe" style="font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;">Запам'ятати мене на цьому пристрої</label>
                 </div>
 
-                <button type="submit" class="btn-wms-primary" style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 0.95rem;">
-                    Увійти в кабінет
-                </button>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <button type="submit" class="btn-wms-primary" style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 0.95rem;">
+                        Увійти за вказаними реквізитами
+                    </button>
+                </div>
             </form>
 
-            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
-                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.85rem;">
-                    Швидкий вхід за 1 клік (Демо-ролі):
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-                    <form asp-action="DemoLogin" method="post" style="margin: 0;">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="role" value="Admin" />
-                        <button type="submit" class="btn-wms-outline" style="width: 100%; justify-content: space-between; font-size: 0.85rem; padding: 0.65rem 0.95rem;">
-                            <span><strong>Олександр Керівник</strong> (Адміністратор)</span>
-                            <span class="badge-custom badge-rose">Admin</span>
-                        </button>
-                    </form>
-                    <form asp-action="DemoLogin" method="post" style="margin: 0;">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="role" value="Storekeeper" />
-                        <button type="submit" class="btn-wms-outline" style="width: 100%; justify-content: space-between; font-size: 0.85rem; padding: 0.65rem 0.95rem;">
-                            <span><strong>Василь Комірник</strong> (Старший комірник)</span>
-                            <span class="badge-custom badge-amber">Storekeeper</span>
-                        </button>
-                    </form>
-                    <form asp-action="DemoLogin" method="post" style="margin: 0;">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="role" value="Auditor" />
-                        <button type="submit" class="btn-wms-outline" style="width: 100%; justify-content: space-between; font-size: 0.85rem; padding: 0.65rem 0.95rem;">
-                            <span><strong>Олена Аудитор</strong> (Фінансовий контролер)</span>
-                            <span class="badge-custom badge-blue">Auditor</span>
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Collapsible Spoiler with Manual Passwords -->
-                <details style="margin-top: 1.25rem; background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.8rem; color: var(--text-secondary); cursor: pointer;">
-                    <summary style="font-weight: 600; color: #0f172a; outline: none; user-select: none;">
-                        ℹ️ Реквізити для ручного тестування форми
-                    </summary>
-                    <div style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
-                        <div style="background: #ffffff; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border-color);">
-                            <span style="color: #b91c1c; font-weight: 700;">Admin:</span> login: <strong>admin</strong> | pass: <strong>Admin#2026!WMS</strong>
-                        </div>
-                        <div style="background: #ffffff; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border-color);">
-                            <span style="color: #b45309; font-weight: 700;">Storekeeper:</span> login: <strong>storekeeper</strong> | pass: <strong>Storekeeper#2026!WMS</strong>
-                        </div>
-                        <div style="background: #ffffff; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--border-color);">
-                            <span style="color: #1d4ed8; font-weight: 700;">Auditor:</span> login: <strong>auditor</strong> | pass: <strong>Auditor#2026!WMS</strong>
-                        </div>
-                    </div>
-                </details>
-            </div>
+            <!-- 1-Click Instant Demo Login Form -->
+            <form id="quickLoginForm" asp-action="DemoLogin" method="post" style="margin-top: 0.75rem;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="role" id="quickRoleInput" value="Admin" />
+                <button type="submit" id="quickLoginBtn" class="btn-wms-outline" style="width: 100%; justify-content: center; font-size: 0.875rem; padding: 0.65rem; border-color: #cbd5e1; background: #ffffff;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="color: #f59e0b;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    <span id="quickLoginText">Вхід за 1 клік як <strong>Олександр Керівник</strong></span>
+                </button>
+            </form>
         </div>
     </div>
 </div>
 
 <script>
+let currentRoleLogin = 'admin';
+let currentRolePassword = 'Admin#2026!WMS';
+
+function selectRole(login, password, roleName, userName, badgeClass, description, btnElem) {
+    currentRoleLogin = login;
+    currentRolePassword = password;
+
+    // Update active tab style
+    document.querySelectorAll('.role-tab-btn').forEach(btn => btn.classList.remove('active'));
+    if (btnElem) btnElem.classList.add('active');
+
+    // Update input values with smooth focus
+    const loginInput = document.getElementById('loginInput');
+    const passwordInput = document.getElementById('passwordInput');
+    loginInput.value = login;
+    passwordInput.value = password;
+
+    // Flash border effect
+    loginInput.style.borderColor = '#3b82f6';
+    passwordInput.style.borderColor = '#3b82f6';
+    setTimeout(() => {
+        loginInput.style.borderColor = '';
+        passwordInput.style.borderColor = '';
+    }, 400);
+
+    // Update role context banner
+    const roleBadge = document.getElementById('role-badge');
+    roleBadge.className = 'badge-custom ' + badgeClass;
+    roleBadge.textContent = roleName;
+
+    document.getElementById('role-user-name').textContent = userName;
+    document.getElementById('role-desc').textContent = description;
+
+    // Update quick login button
+    document.getElementById('quickRoleInput').value = roleName;
+    document.getElementById('quickLoginText').innerHTML = 'Вхід за 1 клік як <strong>' + userName + '</strong>';
+}
+
+function copyLoginCredentials() {
+    const textToCopy = `Логін: ${currentRoleLogin}\nПароль: ${currentRolePassword}`;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        if (window.showWmsToast) {
+            window.showWmsToast(`Реквізити для "${currentRoleLogin}" скопійовано!`);
+        } else {
+            alert('Реквізити скопійовано в буфер обміну!');
+        }
+    }).catch(err => {
+        console.error('Clipboard copy failed:', err);
+    });
+}
+
 function togglePasswordVisibility() {
     const input = document.getElementById('passwordInput');
     const icon = document.getElementById('eyeIcon');

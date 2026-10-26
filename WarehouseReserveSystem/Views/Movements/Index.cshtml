@@ -29,17 +29,34 @@
     }
 </div>
 
+<!-- Quick Filter Chips & Live Search Bar -->
+<div class="wms-card" style="padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div class="filter-pills-container">
+            <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Фільтр операцій:</span>
+            <button type="button" class="filter-pill active" onclick="filterMovementsTable('all', this)">Всі документи (@Model.Count)</button>
+            <button type="button" class="filter-pill" onclick="filterMovementsTable('Receipt', this)">📥 Прихід</button>
+            <button type="button" class="filter-pill" onclick="filterMovementsTable('Shipment', this)">📤 Видаток</button>
+            <button type="button" class="filter-pill" onclick="filterMovementsTable('Transfer', this)">🔄 Переміщення</button>
+        </div>
+
+        <div style="flex: 1; max-width: 350px; min-width: 220px;">
+            <input type="text" id="movementLiveSearch" placeholder="Швидкий пошук за номером або контрагентом..." class="wms-input" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;" />
+        </div>
+    </div>
+</div>
+
 <!-- Documents Table -->
 <div class="wms-card" style="padding: 0; overflow: hidden;">
     <div class="table-responsive">
-        <table class="wms-table">
+        <table class="wms-table" id="movementsTable">
             <thead>
                 <tr>
                     <th>Номер документа</th>
                     <th>Дата та час</th>
                     <th>Тип операції</th>
                     <th>Контрагент / Одержувач</th>
-                    <th>Кількість позицій</th>
+                    <th>Кількість</th>
                     <th>Сума документа</th>
                     <th>Співробітник</th>
                     <th>Статус</th>
@@ -76,9 +93,9 @@
                     var totalQty = m.Items.Sum(i => i.Quantity);
                     var totalSum = m.Items.Sum(i => i.Quantity * i.UnitPrice);
 
-                    <tr>
+                    <tr class="clickable-row movement-table-row" data-type="@m.Type" data-href="@Url.Action("Details", "Movements", new { id = m.Id })" title="Натисніть для перегляду деталей накладної">
                         <td style="white-space: nowrap;">
-                            <a asp-action="Details" asp-route-id="@m.Id" style="color: #93c5fd; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; text-decoration: none;">
+                            <a asp-action="Details" asp-route-id="@m.Id" style="color: #2563eb; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700; text-decoration: none;">
                                 @m.DocumentNumber
                             </a>
                         </td>
@@ -91,11 +108,11 @@
                         <td style="font-size: 0.85rem;">
                             @if (m.Type == StockMovementType.Receipt)
                             {
-                                <span style="color: var(--text-main); font-weight: 500;">@(m.Supplier?.Name ?? "Постачальник")</span>
+                                <span style="color: var(--text-main); font-weight: 600;">@(m.Supplier?.Name ?? "Постачальник")</span>
                             }
                             else if (m.Type == StockMovementType.Shipment)
                             {
-                                <span style="color: var(--text-main); font-weight: 500;">@(m.CustomerName ?? "Клієнт")</span>
+                                <span style="color: var(--text-main); font-weight: 600;">@(m.CustomerName ?? "Клієнт")</span>
                             }
                             else if (m.Type == StockMovementType.Transfer)
                             {
@@ -103,13 +120,13 @@
                             }
                             else
                             {
-                                <span style="color: #f87171;">@m.Reason</span>
+                                <span style="color: #dc2626;">@m.Reason</span>
                             }
                         </td>
-                        <td style="color: var(--text-main); font-weight: 600; white-space: nowrap;">
+                        <td style="color: var(--text-main); font-weight: 700; white-space: nowrap; font-family: 'JetBrains Mono', monospace;">
                             @totalQty од.
                         </td>
-                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; color: var(--text-main); white-space: nowrap;">
+                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; color: #0f172a; white-space: nowrap;">
                             @totalSum.ToString("N2") ₴
                         </td>
                         <td style="white-space: nowrap;">
@@ -121,9 +138,9 @@
                         <td class="actions-cell">
                             <div style="display: inline-flex; gap: 0.4rem; justify-content: flex-end;">
                                 <a asp-action="Details" asp-route-id="@m.Id" class="btn-wms-outline" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;">
-                                    Деталі
+                                    Деталі →
                                 </a>
-                                <a asp-action="Pdf" asp-route-id="@m.Id" class="btn-wms-outline" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; color: #60a5fa;" title="Завантажити PDF">
+                                <a asp-action="Pdf" asp-route-id="@m.Id" class="btn-wms-outline" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; color: #2563eb;" title="Завантажити офіційну накладну (PDF)">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="12" y2="18"/><line x1="15" y1="15" x2="12" y2="18"/></svg>
                                     PDF
                                 </a>
@@ -135,3 +152,32 @@
         </table>
     </div>
 </div>
+
+@section Scripts {
+<script>
+function filterMovementsTable(type, btn) {
+    document.querySelectorAll('.filter-pills-container .filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const rows = document.querySelectorAll('.movement-table-row');
+    rows.forEach(r => {
+        if (type === 'all' || r.getAttribute('data-type') === type) {
+            r.style.display = '';
+        } else {
+            r.style.display = 'none';
+        }
+    });
+}
+
+const movSearch = document.getElementById('movementLiveSearch');
+if (movSearch) {
+    movSearch.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('.movement-table-row');
+        rows.forEach(r => {
+            const text = r.textContent.toLowerCase();
+            r.style.display = text.includes(query) ? '' : 'none';
+        });
+    });
+}
+</script>
+}
