@@ -114,8 +114,9 @@ public class AccountController(DemoUserService demoUserService, IAuditService au
         return RedirectToAction("Index", "Home");
     }
 
+    [HttpGet]
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [IgnoreAntiforgeryToken]
     public async Task<IActionResult> Logout()
     {
         var login = User.Identity?.Name ?? "anonymous";
