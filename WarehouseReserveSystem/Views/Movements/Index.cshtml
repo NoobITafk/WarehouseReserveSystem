@@ -1,0 +1,134 @@
+@model IReadOnlyList<WarehouseReserveSystem.Models.StockMovement>
+@{
+    ViewData["Title"] = "Журнал складських накладних";
+    Layout = "_Layout";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.25rem 0;">Журнал руху матеріальних цінностей</h1>
+        <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Реєстр прибуткових, видаткових накладних та актів переміщення</p>
+    </div>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Storekeeper"))
+    {
+        <div style="display: flex; gap: 0.75rem;">
+            <a asp-action="Receipt" class="btn-wms-emerald">
+                + Прихід від постачальника
+            </a>
+            <a asp-action="Shipment" class="btn-wms-primary">
+                + Відвантаження клієнту
+            </a>
+            <a asp-action="Transfer" class="btn-wms-outline">
+                + Переміщення
+            </a>
+        </div>
+    }
+</div>
+
+<!-- Documents Table -->
+<div class="wms-card" style="padding: 0; overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table class="wms-table">
+            <thead>
+                <tr>
+                    <th>Номер документа</th>
+                    <th>Дата та час</th>
+                    <th>Тип операції</th>
+                    <th>Контрагент / Одержувач</th>
+                    <th>Кількість позицій</th>
+                    <th>Сума документа</th>
+                    <th>Співробітник</th>
+                    <th>Статус</th>
+                    <th style="text-align: right;">Документи</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                            Документів руху ще не зареєстровано.
+                        </td>
+                    </tr>
+                }
+                @foreach (var m in Model)
+                {
+                    var badgeClass = m.Type switch
+                    {
+                        StockMovementType.Receipt => "badge-emerald",
+                        StockMovementType.Shipment => "badge-blue",
+                        StockMovementType.Transfer => "badge-purple",
+                        _ => "badge-rose"
+                    };
+
+                    var typeName = m.Type switch
+                    {
+                        StockMovementType.Receipt => "Прихід",
+                        StockMovementType.Shipment => "Видаток",
+                        StockMovementType.Transfer => "Переміщення",
+                        _ => "Списання"
+                    };
+
+                    var totalQty = m.Items.Sum(i => i.Quantity);
+                    var totalSum = m.Items.Sum(i => i.Quantity * i.UnitPrice);
+
+                    <tr>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@m.Id" style="color: #93c5fd; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; text-decoration: none;">
+                                @m.DocumentNumber
+                            </a>
+                        </td>
+                        <td style="font-size: 0.85rem; color: var(--text-secondary);">
+                            @m.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                        </td>
+                        <td>
+                            <span class="badge-custom @badgeClass">@typeName</span>
+                        </td>
+                        <td style="font-size: 0.85rem;">
+                            @if (m.Type == StockMovementType.Receipt)
+                            {
+                                <span style="color: #fff; font-weight: 500;">@(m.Supplier?.Name ?? "Постачальник")</span>
+                            }
+                            else if (m.Type == StockMovementType.Shipment)
+                            {
+                                <span style="color: #fff; font-weight: 500;">@(m.CustomerName ?? "Клієнт")</span>
+                            }
+                            else if (m.Type == StockMovementType.Transfer)
+                            {
+                                <span style="color: var(--text-secondary);">@m.Reason</span>
+                            }
+                            else
+                            {
+                                <span style="color: #f87171;">@m.Reason</span>
+                            }
+                        </td>
+                        <td style="color: var(--text-main); font-weight: 600;">
+                            @totalQty од.
+                        </td>
+                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; color: #fff;">
+                            @totalSum.ToString("N2") ₴
+                        </td>
+                        <td>
+                            <span style="font-size: 0.8rem; color: var(--text-secondary);">@m.StaffLogin</span>
+                        </td>
+                        <td>
+                            <span class="badge-custom badge-emerald">Проведено</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <div style="display: inline-flex; gap: 0.5rem;">
+                                <a asp-action="Details" asp-route-id="@m.Id" class="btn-wms-outline" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;">
+                                    Деталі
+                                </a>
+                                <a asp-action="Pdf" asp-route-id="@m.Id" class="btn-wms-outline" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; color: #60a5fa;" title="Завантажити PDF">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="12" y2="18"/><line x1="15" y1="15" x2="12" y2="18"/></svg>
+                                    PDF
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

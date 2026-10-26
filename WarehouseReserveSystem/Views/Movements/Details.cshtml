@@ -1,0 +1,163 @@
+@model WarehouseReserveSystem.Models.StockMovement
+@{
+    ViewData["Title"] = $"Документ {Model.DocumentNumber}";
+    Layout = "_Layout";
+
+    var badgeClass = Model.Type switch
+    {
+        StockMovementType.Receipt => "badge-emerald",
+        StockMovementType.Shipment => "badge-blue",
+        StockMovementType.Transfer => "badge-purple",
+        _ => "badge-rose"
+    };
+
+    var typeName = Model.Type switch
+    {
+        StockMovementType.Receipt => "Прибуткова накладна",
+        StockMovementType.Shipment => "Видаткова накладна",
+        StockMovementType.Transfer => "Акт внутрішнього переміщення",
+        _ => "Акт списання"
+    };
+
+    int totalQty = Model.Items.Sum(i => i.Quantity);
+    decimal totalSum = Model.Items.Sum(i => i.Quantity * i.UnitPrice);
+}
+
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <a asp-action="Index" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">← До журналу накладних</a>
+            <span style="color: var(--border-subtle);">/</span>
+            <span class="badge-custom @badgeClass">@typeName</span>
+            <span class="badge-custom badge-emerald">Проведено</span>
+        </div>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.5rem 0;">Документ № @Model.DocumentNumber</h1>
+        <div style="font-size: 0.85rem; color: var(--text-secondary);">
+            Дата проведення: <strong>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</strong> · Відповідальний: <strong>@Model.StaffLogin</strong>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 0.75rem;">
+        <a asp-action="Pdf" asp-route-id="@Model.Id" class="btn-wms-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="12" y2="18"/><line x1="15" y1="15" x2="12" y2="18"/></svg>
+            Завантажити офіційний PDF-документ
+        </a>
+    </div>
+</div>
+
+<!-- Header details card -->
+<div class="wms-card" style="margin-bottom: 1.5rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;">
+        <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Контрагент:</div>
+            <div style="font-size: 0.95rem; font-weight: 600; color: #fff;">
+                @(Model.Supplier?.Name ?? Model.CustomerName ?? Model.Reason ?? "Внутрішній оборот")
+            </div>
+            @if (Model.Supplier != null)
+            {
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem;">
+                    ЄДРПОУ: @Model.Supplier.TaxNumber · @Model.Supplier.Phone
+                </div>
+            }
+        </div>
+
+        <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Загальний обсяг:</div>
+            <div style="font-size: 1.15rem; font-weight: 700; color: #34d399;">
+                @totalQty од.
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary);">Позицій у документі: @Model.Items.Count</div>
+        </div>
+
+        <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Загальна сума операції:</div>
+            <div style="font-size: 1.15rem; font-weight: 700; color: #60a5fa; font-family: 'JetBrains Mono', monospace;">
+                @totalSum.ToString("N2") грн
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Без ПДВ</div>
+        </div>
+
+        <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Примітки та підстава:</div>
+            <div style="font-size: 0.85rem; color: var(--text-main);">
+                @(Model.Notes ?? Model.Reason ?? "Згідно з внутрішнім регламентом")
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Items Table -->
+<div class="wms-card" style="padding: 0; overflow: hidden;">
+    <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-color);">
+        <h3 style="margin: 0; font-size: 1rem; font-weight: 600; color: #fff;">Специфікація матеріальних цінностей</h3>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="wms-table">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Артикул (SKU)</th>
+                    <th>Найменування товару</th>
+                    <th>Звідки (Комірка)</th>
+                    <th>Куди (Комірка)</th>
+                    <th>Партія</th>
+                    <th>Кількість</th>
+                    <th>Ціна, грн</th>
+                    <th style="text-align: right;">Разом, грн</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int idx = 1; }
+                @foreach (var item in Model.Items)
+                {
+                    decimal lineSum = item.Quantity * item.UnitPrice;
+                    <tr>
+                        <td style="color: var(--text-muted); font-size: 0.8rem;">@idx</td>
+                        <td>
+                            <span class="sku-badge">@item.Product?.Sku</span>
+                        </td>
+                        <td>
+                            <a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId" style="color: #fff; font-weight: 600; text-decoration: none;">
+                                @item.Product?.Name
+                            </a>
+                        </td>
+                        <td>
+                            @if (item.SourceLocation != null)
+                            {
+                                <span class="sku-badge" style="color: #f87171;">@item.SourceLocation.Code</span>
+                            }
+                            else
+                            {
+                                <span style="color: var(--text-muted);">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.DestinationLocation != null)
+                            {
+                                <span class="sku-badge" style="color: #34d399;">@item.DestinationLocation.Code</span>
+                            }
+                            else
+                            {
+                                <span style="color: var(--text-muted);">-</span>
+                            }
+                        </td>
+                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary);">
+                            @(item.BatchNumber ?? "-")
+                        </td>
+                        <td style="font-weight: 700; color: #fff;">
+                            @item.Quantity @(item.Product?.Unit ?? "шт")
+                        </td>
+                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-secondary);">
+                            @item.UnitPrice.ToString("N2") ₴
+                        </td>
+                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 700; color: #60a5fa; text-align: right;">
+                            @lineSum.ToString("N2") ₴
+                        </td>
+                    </tr>
+                    idx++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

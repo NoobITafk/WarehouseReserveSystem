@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Доступ обмежено";
+    Layout = "_Layout";
+}
+
+<div style="min-height: 60vh; display: flex; align-items: center; justify-content: center; text-align: center;">
+    <div style="max-width: 480px;">
+        <div style="width: 64px; height: 64px; border-radius: 16px; background: rgba(239, 68, 68, 0.15); color: #f87171; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <h1 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;">Недостатньо прав доступу (403)</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Ваша роль не дозволяє виконувати цю дію. Зверніться до адміністратора системи або увійдіть під іншим обліковим записом.</p>
+        <a asp-controller="Home" asp-action="Index" class="btn-wms-primary">Повернутися на дашборд</a>
+    </div>
+</div>

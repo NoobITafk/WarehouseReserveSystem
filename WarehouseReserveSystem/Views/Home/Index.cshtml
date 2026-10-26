@@ -1,0 +1,250 @@
+@model WarehouseReserveSystem.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Складська аналітика";
+    Layout = "_Layout";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+    <div>
+        <h1 style="font-size: 1.75rem; font-weight: 700; color: #fff; margin: 0 0 0.25rem 0; letter-spacing: -0.025em;">Панель управління складом</h1>
+        <p style="color: var(--text-secondary); margin: 0; font-size: 0.9rem;">Оперативний стан залишків, рух матеріальних цінностей та адресне розміщення</p>
+    </div>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Storekeeper"))
+    {
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <a asp-controller="Movements" asp-action="Receipt" class="btn-wms-emerald">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                + Оприбуткування
+            </a>
+            <a asp-controller="Movements" asp-action="Shipment" class="btn-wms-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                Відвантаження
+            </a>
+            <a asp-controller="Movements" asp-action="Transfer" class="btn-wms-outline">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                Переміщення
+            </a>
+        </div>
+    }
+</div>
+
+@if (Model.LowStockCount > 0)
+{
+    <div class="alert-banner-rose" style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="background: rgba(239, 68, 68, 0.2); padding: 0.5rem; border-radius: 8px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div>
+                <strong style="color: #fff; font-size: 0.95rem;">Увага: виявлено дефіцит товарів!</strong>
+                <div style="font-size: 0.85rem; color: #fca5a5;">Залишки по @Model.LowStockCount найменуванням впали нижче мінімального критичного порогу.</div>
+            </div>
+        </div>
+        <a asp-controller="Stock" asp-action="Alerts" class="btn-wms-outline" style="border-color: rgba(239, 68, 68, 0.4); color: #fff; background: rgba(239, 68, 68, 0.2);">
+            Переглянути дефіцит →
+        </a>
+    </div>
+}
+
+<!-- Stat Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+    <div class="stat-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+            <span class="stat-label">Оцінка вартості складу</span>
+            <div class="stat-icon-wrapper" style="background: var(--emerald-light); color: var(--emerald);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+        </div>
+        <div class="stat-val">@Model.TotalStockValuation.ToString("N2") <span style="font-size: 1rem; font-weight: 500; color: var(--text-secondary);">грн</span></div>
+        <div style="font-size: 0.75rem; color: var(--emerald); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.25rem;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+            Розраховано за собівартістю закупівлі
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+            <span class="stat-label">Одиниць товару в наявності</span>
+            <div class="stat-icon-wrapper" style="background: var(--primary-light); color: var(--primary);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="16.5" x2="7.5" y1="9.4" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/></svg>
+            </div>
+        </div>
+        <div class="stat-val">@Model.TotalUnitsInStock.ToString("N0") <span style="font-size: 1rem; font-weight: 500; color: var(--text-secondary);">од.</span></div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+            Розміщено у @Model.StorageLocationsCount адресних комірках
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+            <span class="stat-label">Активних артикулів (SKU)</span>
+            <div class="stat-icon-wrapper" style="background: var(--purple-light); color: var(--purple);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+            </div>
+        </div>
+        <div class="stat-val">@Model.TotalActiveSkus <span style="font-size: 1rem; font-weight: 500; color: var(--text-secondary);">позицій</span></div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+            У 4 основних товарних категоріях
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+            <span class="stat-label">Дефіцитні товари</span>
+            <div class="stat-icon-wrapper" style="background: var(--rose-light); color: var(--rose);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+        </div>
+        <div class="stat-val" style="color: @(Model.LowStockCount > 0 ? "#f87171" : "#fff");">@Model.LowStockCount <span style="font-size: 1rem; font-weight: 500; color: var(--text-secondary);">SKU</span></div>
+        <div style="font-size: 0.75rem; color: @(Model.LowStockCount > 0 ? "#f87171" : "var(--emerald)"); margin-top: 0.5rem;">
+            @(Model.LowStockCount > 0 ? "Потребують термінового замовлення" : "Залишки в межах норми")
+        </div>
+    </div>
+</div>
+
+<!-- Two Column Layout -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; align-items: flex-start;">
+    <!-- Left Column: Recent Movements -->
+    <div class="wms-card" style="padding: 0; overflow: hidden;">
+        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin: 0; font-size: 1.05rem; font-weight: 600; color: #fff;">Останній рух товарно-матеріальних цінностей</h3>
+                <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: var(--text-secondary);">Прибуткові, видаткові накладні та переміщення</p>
+            </div>
+            <a asp-controller="Movements" asp-action="Index" class="btn-wms-outline" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;">
+                Всі накладні →
+            </a>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="wms-table">
+                <thead>
+                    <tr>
+                        <th>Документ</th>
+                        <th>Тип</th>
+                        <th>Контрагент / Маршрут</th>
+                        <th>Кількість</th>
+                        <th>Співробітник</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var m in Model.RecentMovements)
+                    {
+                        var badgeClass = m.Type switch
+                        {
+                            StockMovementType.Receipt => "badge-emerald",
+                            StockMovementType.Shipment => "badge-blue",
+                            StockMovementType.Transfer => "badge-purple",
+                            _ => "badge-rose"
+                        };
+
+                        var typeName = m.Type switch
+                        {
+                            StockMovementType.Receipt => "Прихід",
+                            StockMovementType.Shipment => "Видаток",
+                            StockMovementType.Transfer => "Переміщення",
+                            _ => "Списання"
+                        };
+
+                        var totalQty = m.Items.Sum(i => i.Quantity);
+
+                        <tr>
+                            <td>
+                                <a asp-controller="Movements" asp-action="Details" asp-route-id="@m.Id" style="color: #93c5fd; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; text-decoration: none;">
+                                    @m.DocumentNumber
+                                </a>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">@m.CreatedAt.ToString("dd.MM.yyyy HH:mm")</div>
+                            </td>
+                            <td>
+                                <span class="badge-custom @badgeClass">@typeName</span>
+                            </td>
+                            <td style="font-size: 0.85rem;">
+                                @if (m.Type == StockMovementType.Receipt)
+                                {
+                                    <span style="color: #fff;">@(m.Supplier?.Name ?? "Постачальник")</span>
+                                }
+                                else if (m.Type == StockMovementType.Shipment)
+                                {
+                                    <span style="color: #fff;">@(m.CustomerName ?? "Клієнт")</span>
+                                }
+                                else if (m.Type == StockMovementType.Transfer)
+                                {
+                                    <span style="color: var(--text-secondary);">@m.Reason</span>
+                                }
+                                else
+                                {
+                                    <span style="color: #f87171;">@m.Reason</span>
+                                }
+                            </td>
+                            <td style="font-weight: 600; color: #fff;">
+                                @totalQty од.
+                            </td>
+                            <td>
+                                <span style="font-size: 0.8rem; color: var(--text-secondary);">@m.StaffLogin</span>
+                            </td>
+                            <td>
+                                <a asp-controller="Movements" asp-action="Pdf" asp-route-id="@m.Id" class="btn-wms-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Завантажити PDF накладну">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="12" y2="18"/><line x1="15" y1="15" x2="12" y2="18"/></svg>
+                                    PDF
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Right Column: Warehouses Capacity -->
+    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div class="wms-card">
+            <h3 style="margin: 0 0 1rem 0; font-size: 1.05rem; font-weight: 600; color: #fff; display: flex; align-items: center; justify-content: space-between;">
+                <span>Складські комплекси</span>
+                <a asp-controller="Warehouses" asp-action="Index" style="font-size: 0.8rem; color: #60a5fa; text-decoration: none;">Всі склади →</a>
+            </h3>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                @foreach (var wh in Model.Warehouses)
+                {
+                    double pct = wh.TotalLocations > 0 ? (wh.OccupiedLocations * 100.0 / wh.TotalLocations) : 0;
+                    <div style="background: var(--bg-card-subtle); padding: 1rem; border-radius: 10px; border: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                            <a asp-controller="Warehouses" asp-action="Details" asp-route-id="@wh.WarehouseId" style="color: #fff; font-weight: 600; text-decoration: none; font-size: 0.9rem;">
+                                @wh.Name
+                            </a>
+                            <span class="sku-badge" style="font-size: 0.75rem;">@wh.Code</span>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                            <span>Заповненість комірок:</span>
+                            <span style="font-weight: 600; color: #fff;">@wh.OccupiedLocations / @wh.TotalLocations (@pct.ToString("F0")%)</span>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div style="background: rgba(255, 255, 255, 0.08); height: 6px; border-radius: 9999px; overflow: hidden; margin-bottom: 0.75rem;">
+                            <div style="background: linear-gradient(90deg, #3b82f6, #10b981); height: 100%; width: @(pct)%;"></div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+                            <span>Товарів: <strong>@wh.TotalItemsCount шт</strong></span>
+                            <span>Вартість: <strong>@wh.TotalValuation.ToString("N0") грн</strong></span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Quick Help card -->
+        <div class="wms-card" style="background: linear-gradient(180deg, rgba(31, 41, 61, 0.4) 0%, rgba(17, 24, 39, 0.8) 100%);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; color: #60a5fa;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span style="font-weight: 600; font-size: 0.9rem;">Адресне зберігання</span>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">
+                Кожна комірка має 4-рівневу координату: <strong>Зона · Ряд · Стелаж · Полиця</strong>. При проведенні накладних залишки списуються та поповнюються автоматично в транзакціях без можливості від'ємних значень.
+            </p>
+        </div>
+    </div>
+</div>

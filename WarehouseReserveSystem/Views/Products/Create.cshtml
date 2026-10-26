@@ -1,0 +1,99 @@
+@model WarehouseReserveSystem.ViewModels.ProductFormViewModel
+@{
+    ViewData["Title"] = "Створення нового товару (SKU)";
+    Layout = "_Layout";
+}
+
+<div style="max-width: 800px; margin: 0 auto;">
+    <div style="margin-bottom: 1.5rem;">
+        <a asp-action="Index" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">← Повернутися до каталогу</a>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0.5rem 0 0.25rem 0;">Реєстрація нової номенклатурної одиниці</h1>
+        <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Внесення унікального SKU, параметрів ціноутворення та порогових залишків</p>
+    </div>
+
+    <div class="wms-card">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; padding: 0.75rem; border-radius: 8px; margin-bottom: 1.25rem;"></div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label asp-for="Sku" class="wms-label">Артикул (SKU) *</label>
+                    <input asp-for="Sku" class="wms-input" placeholder="SKU-AUTO-2026" />
+                    <span asp-validation-for="Sku" style="color: #f87171; font-size: 0.8rem;"></span>
+                </div>
+                <div>
+                    <label asp-for="Barcode" class="wms-label">Штрих-код (EAN-13) *</label>
+                    <input asp-for="Barcode" class="wms-input" placeholder="4820000000000" />
+                    <span asp-validation-for="Barcode" style="color: #f87171; font-size: 0.8rem;"></span>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label asp-for="Name" class="wms-label">Повне найменування товару *</label>
+                <input asp-for="Name" class="wms-input" placeholder="Контролер промисловий..." />
+                <span asp-validation-for="Name" style="color: #f87171; font-size: 0.8rem;"></span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label asp-for="CategoryId" class="wms-label">Товарна категорія *</label>
+                    <select asp-for="CategoryId" asp-items="Model.Categories" class="wms-input"></select>
+                    <span asp-validation-for="CategoryId" style="color: #f87171; font-size: 0.8rem;"></span>
+                </div>
+                <div>
+                    <label asp-for="SupplierId" class="wms-label">Постачальник</label>
+                    <select asp-for="SupplierId" asp-items="Model.Suppliers" class="wms-input">
+                        <option value="">Не закріплено</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label asp-for="CostPrice" class="wms-label">Собівартість, грн *</label>
+                    <input asp-for="CostPrice" type="number" step="0.01" class="wms-input" />
+                    <span asp-validation-for="CostPrice" style="color: #f87171; font-size: 0.8rem;"></span>
+                </div>
+                <div>
+                    <label asp-for="SellingPrice" class="wms-label">Ціна продажу, грн *</label>
+                    <input asp-for="SellingPrice" type="number" step="0.01" class="wms-input" />
+                    <span asp-validation-for="SellingPrice" style="color: #f87171; font-size: 0.8rem;"></span>
+                </div>
+                <div>
+                    <label asp-for="MinStockThreshold" class="wms-label">Критичний поріг (Min Stock) *</label>
+                    <input asp-for="MinStockThreshold" type="number" class="wms-input" />
+                    <span asp-validation-for="MinStockThreshold" style="color: #f87171; font-size: 0.8rem;"></span>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label asp-for="Unit" class="wms-label">Одиниця виміру *</label>
+                    <select asp-for="Unit" class="wms-input">
+                        <option value="шт">шт (штука)</option>
+                        <option value="кг">кг (кілограм)</option>
+                        <option value="упак">упак (упаковка)</option>
+                        <option value="бухт">бухт (бухта)</option>
+                        <option value="л">л (літр)</option>
+                        <option value="м">м (метр)</option>
+                    </select>
+                </div>
+                <div>
+                    <label asp-for="WeightKg" class="wms-label">Вага одиниці (кг)</label>
+                    <input asp-for="WeightKg" type="number" step="0.01" class="wms-input" />
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label asp-for="Description" class="wms-label">Опис та технічні примітки</label>
+                <textarea asp-for="Description" rows="3" class="wms-input"></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                <a asp-action="Index" class="btn-wms-outline">Скасувати</a>
+                <button type="submit" class="btn-wms-primary">Зберегти товар</button>
+            </div>
+        </form>
+    </div>
+</div>

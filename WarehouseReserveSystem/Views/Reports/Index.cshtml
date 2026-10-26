@@ -1,0 +1,59 @@
+@{
+    ViewData["Title"] = "Аналітичні звіти та експорт";
+    Layout = "_Layout";
+}
+
+<div style="margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.25rem 0;">Складська аналітика та експорт даних</h1>
+    <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Формування зведених відомостей, фінансової оцінки та вивантаження у форматі CSV (Excel/1C/BAS)</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem;">
+    <!-- Report 1 -->
+    <div class="wms-card wms-card-hover" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                <div class="stat-icon-wrapper" style="background: var(--emerald-light); color: var(--emerald);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #fff;">Оборотно-сальдова відомість залишків</h3>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Повний зріз складських запасів</div>
+                </div>
+            </div>
+
+            <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                Містить повну деталізацію по кожній адресній комірці: артикул (SKU), назву, штрих-код, кількість, собівартість, сумарну оцінку лінії та номер партії. Сумісний з Microsoft Excel (UTF-8 з BOM).
+            </p>
+        </div>
+
+        <a asp-action="ExportStockBalancesCsv" class="btn-wms-emerald" style="width: 100%; justify-content: center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Завантажити відомість (.CSV)
+        </a>
+    </div>
+
+    <!-- Report 2 -->
+    <div class="wms-card wms-card-hover" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                <div class="stat-icon-wrapper" style="background: var(--primary-light); color: var(--primary);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #fff;">Реєстр документів руху товарів</h3>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Приходи, вибуття та внутрішні ротації</div>
+                </div>
+            </div>
+
+            <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1.5rem;">
+                Зведений реєстр складських накладних із зазначенням типу операції, дати проведення, контрагентів (постачальник/замовник), загальних сум та відповідальних співробітників за зміну.
+            </p>
+        </div>
+
+        <a asp-action="ExportMovementsCsv" class="btn-wms-primary" style="width: 100%; justify-content: center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Завантажити реєстр накладних (.CSV)
+        </a>
+    </div>
+</div>

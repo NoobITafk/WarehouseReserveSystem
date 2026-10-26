@@ -1,0 +1,150 @@
+@model IReadOnlyList<WarehouseReserveSystem.Models.Product>
+@{
+    ViewData["Title"] = "Каталог товарів (SKU)";
+    Layout = "_Layout";
+    var categories = ViewBag.Categories as IReadOnlyList<WarehouseReserveSystem.Models.Category> ?? [];
+    int? selectedCat = ViewBag.SelectedCategoryId;
+    string? search = ViewBag.SearchTerm;
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.25rem 0;">Каталог матеріальних цінностей (SKU)</h1>
+        <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Номенклатура товарів, ціни, артикули та порогові значення запасів</p>
+    </div>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Storekeeper"))
+    {
+        <a asp-action="Create" class="btn-wms-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Додати новий товар
+        </a>
+    }
+</div>
+
+<!-- Filter Bar -->
+<div class="wms-card" style="padding: 1rem; margin-bottom: 1.5rem;">
+    <form method="get" asp-action="Index" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 250px;">
+            <input type="text" name="search" value="@search" placeholder="Пошук за назвою, SKU або штрих-кодом..." class="wms-input" />
+        </div>
+
+        <div style="width: 260px;">
+            <select name="categoryId" class="wms-input">
+                <option value="">Всі товарні категорії</option>
+                @foreach (var cat in categories)
+                {
+                    <option value="@cat.Id" selected="@(cat.Id == selectedCat)">@cat.Name</option>
+                }
+            </select>
+        </div>
+
+        <button type="submit" class="btn-wms-outline">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Фільтрувати
+        </button>
+
+        @if (selectedCat.HasValue || !string.IsNullOrWhiteSpace(search))
+        {
+            <a asp-action="Index" class="btn-wms-outline" style="color: #f87171; border-color: rgba(239, 68, 68, 0.3);">
+                Скинути
+            </a>
+        }
+    </form>
+</div>
+
+<!-- Products Table -->
+<div class="wms-card" style="padding: 0; overflow: hidden;">
+    <div style="overflow-x: auto;">
+        <table class="wms-table">
+            <thead>
+                <tr>
+                    <th>Артикул / Штрих-код</th>
+                    <th>Назва товару</th>
+                    <th>Категорія</th>
+                    <th>Залишок</th>
+                    <th>Собівартість</th>
+                    <th>Ціна продажу</th>
+                    <th>Статус</th>
+                    <th style="text-align: right;">Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                            Товарів за вказаними критеріями не знайдено.
+                        </td>
+                    </tr>
+                }
+                @foreach (var p in Model)
+                {
+                    var totalStock = p.StockItems.Sum(s => s.Quantity);
+                    var isLowStock = totalStock <= p.MinStockThreshold;
+
+                    <tr>
+                        <td>
+                            <div class="sku-badge">@p.Sku</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 0.2rem;">@p.Barcode</div>
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@p.Id" style="color: #fff; font-weight: 600; text-decoration: none; font-size: 0.9rem;">
+                                @p.Name
+                            </a>
+                            @if (!string.IsNullOrWhiteSpace(p.Description))
+                            {
+                                <div style="font-size: 0.75rem; color: var(--text-secondary); max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    @p.Description
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge-custom badge-blue">
+                                @(p.Category?.Name ?? "Загальне")
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge-custom @(isLowStock ? "badge-rose" : "badge-emerald")" style="font-size: 0.8rem; font-weight: 700;">
+                                @totalStock @p.Unit
+                            </span>
+                            @if (isLowStock)
+                            {
+                                <div style="font-size: 0.7rem; color: #f87171; margin-top: 0.2rem;">Мін: @p.MinStockThreshold @p.Unit</div>
+                            }
+                        </td>
+                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-secondary);">
+                            @p.CostPrice.ToString("N2") ₴
+                        </td>
+                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 600; color: #fff;">
+                            @p.SellingPrice.ToString("N2") ₴
+                        </td>
+                        <td>
+                            @if (p.IsActive)
+                            {
+                                <span class="badge-custom badge-emerald">Активний</span>
+                            }
+                            else
+                            {
+                                <span class="badge-custom badge-amber">В архіві</span>
+                            }
+                        </td>
+                        <td style="text-align: right;">
+                            <div style="display: inline-flex; gap: 0.5rem;">
+                                <a asp-action="Details" asp-route-id="@p.Id" class="btn-wms-outline" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;">
+                                    Картка
+                                </a>
+                                @if (User.IsInRole("Admin") || User.IsInRole("Storekeeper"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@p.Id" class="btn-wms-outline" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;">
+                                        Ред.
+                                    </a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,80 @@
+@model WarehouseReserveSystem.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Авторизація WMS";
+    Layout = "_Layout";
+}
+
+<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="max-width: 440px; width: 100%;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 14px; color: #fff; margin-bottom: 1rem; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.35);">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                    <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+            </div>
+            <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.5rem 0; letter-spacing: -0.025em;">WarehouseReserve WMS</h1>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Система адресного складського обліку та контролю залишків</p>
+        </div>
+
+        <div class="wms-card" style="padding: 2rem;">
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="ReturnUrl" />
+
+                <div asp-validation-summary="ModelOnly" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1.25rem;"></div>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <label asp-for="Login" class="wms-label">Логін або Email</label>
+                    <input asp-for="Login" id="loginInput" class="wms-input" placeholder="admin" autofocus />
+                    <span asp-validation-for="Login" style="color: #f87171; font-size: 0.8rem;"></span>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                        <label asp-for="Password" class="wms-label" style="margin-bottom: 0;">Пароль</label>
+                    </div>
+                    <input asp-for="Password" id="passwordInput" type="password" class="wms-input" placeholder="••••••••" />
+                    <span asp-validation-for="Password" style="color: #f87171; font-size: 0.8rem;"></span>
+                </div>
+
+                <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <input asp-for="RememberMe" type="checkbox" id="rememberMe" style="accent-color: var(--primary); width: 16px; height: 16px;" />
+                    <label for="rememberMe" style="font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;">Запам'ятати мене на 14 днів</label>
+                </div>
+
+                <button type="submit" class="btn-wms-primary" style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 0.95rem;">
+                    Увійти в термінал
+                </button>
+            </form>
+
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
+                    Швидкий демо-доступ (1 клік):
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <button type="button" class="btn-wms-outline" style="width: 100%; justify-content: space-between; font-size: 0.8rem; padding: 0.45rem 0.75rem;" onclick="setCredentials('admin', 'Admin#2026!WMS')">
+                        <span><strong>admin</strong> (Керівник / Адміністратор)</span>
+                        <span class="badge-custom badge-rose">Admin</span>
+                    </button>
+                    <button type="button" class="btn-wms-outline" style="width: 100%; justify-content: space-between; font-size: 0.8rem; padding: 0.45rem 0.75rem;" onclick="setCredentials('storekeeper', 'Storekeeper#2026!WMS')">
+                        <span><strong>storekeeper</strong> (Старший комірник)</span>
+                        <span class="badge-custom badge-amber">Store</span>
+                    </button>
+                    <button type="button" class="btn-wms-outline" style="width: 100%; justify-content: space-between; font-size: 0.8rem; padding: 0.45rem 0.75rem;" onclick="setCredentials('auditor', 'Auditor#2026!WMS')">
+                        <span><strong>auditor</strong> (Фінансовий аудитор)</span>
+                        <span class="badge-custom badge-blue">Audit</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function setCredentials(login, password) {
+    document.getElementById('loginInput').value = login;
+    document.getElementById('passwordInput').value = password;
+}
+</script>

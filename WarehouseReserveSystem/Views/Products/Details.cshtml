@@ -1,0 +1,187 @@
+@model WarehouseReserveSystem.Models.Product
+@{
+    ViewData["Title"] = $"{Model.Name} ({Model.Sku})";
+    Layout = "_Layout";
+    var totalStock = Model.StockItems.Sum(s => s.Quantity);
+    var isLowStock = totalStock <= Model.MinStockThreshold;
+    var totalValuation = totalStock * Model.CostPrice;
+    var margin = Model.SellingPrice > 0 ? ((Model.SellingPrice - Model.CostPrice) / Model.SellingPrice) * 100 : 0;
+}
+
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+            <a asp-action="Index" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">← До каталогу товарів</a>
+            <span style="color: var(--border-subtle);">/</span>
+            <span class="sku-badge">@Model.Sku</span>
+            <span class="badge-custom @(Model.IsActive ? "badge-emerald" : "badge-amber")">
+                @(Model.IsActive ? "Активний" : "В архіві")
+            </span>
+        </div>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.5rem 0;">@Model.Name</h1>
+        <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace;">
+            Штрих-код: <strong>@Model.Barcode</strong> · Категорія: <strong style="color: #60a5fa;">@(Model.Category?.Name ?? "Загальне")</strong>
+        </div>
+    </div>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Storekeeper"))
+    {
+        <div style="display: flex; gap: 0.5rem;">
+            <a asp-controller="Movements" asp-action="Receipt" class="btn-wms-emerald">
+                + Поповнити (Прихід)
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-wms-outline">
+                Редагувати параметри
+            </a>
+        </div>
+    }
+</div>
+
+<!-- 4 Key Numbers -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+    <div class="stat-card">
+        <span class="stat-label">Сумарний залишок</span>
+        <div class="stat-val" style="color: @(isLowStock ? "#f87171" : "#fff"); margin-top: 0.25rem;">
+            @totalStock <span style="font-size: 1rem; font-weight: 500; color: var(--text-secondary);">@Model.Unit</span>
+        </div>
+        <div style="font-size: 0.75rem; color: @(isLowStock ? "#f87171" : "var(--emerald)"); margin-top: 0.25rem;">
+            @(isLowStock ? $"Критичний дефіцит (мін. поріг: {Model.MinStockThreshold})" : "Запас достатній")
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-label">Собівартість закупівлі</span>
+        <div class="stat-val" style="margin-top: 0.25rem;">
+            @Model.CostPrice.ToString("N2") <span style="font-size: 1rem; font-weight: 500; color: var(--text-secondary);">грн</span>
+        </div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">За 1 @Model.Unit</div>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-label">Ціна реалізації</span>
+        <div class="stat-val" style="color: #34d399; margin-top: 0.25rem;">
+            @Model.SellingPrice.ToString("N2") <span style="font-size: 1rem; font-weight: 500; color: var(--text-secondary);">грн</span>
+        </div>
+        <div style="font-size: 0.75rem; color: #34d399; margin-top: 0.25rem;">Торгова маржа: @margin.ToString("F1")%</div>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-label">Оцінка залишку на складі</span>
+        <div class="stat-val" style="color: #60a5fa; margin-top: 0.25rem;">
+            @totalValuation.ToString("N2") <span style="font-size: 1rem; font-weight: 500; color: var(--text-secondary);">грн</span>
+        </div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">@totalStock × собівартість</div>
+    </div>
+</div>
+
+<!-- Locations table & Supplier info -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; align-items: flex-start;">
+    <div class="wms-card" style="padding: 0; overflow: hidden;">
+        <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-color);">
+            <h3 style="margin: 0; font-size: 1rem; font-weight: 600; color: #fff;">Адресне розміщення по комірках</h3>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="wms-table">
+                <thead>
+                    <tr>
+                        <th>Склад</th>
+                        <th>Зона</th>
+                        <th>Комірка</th>
+                        <th>Партія</th>
+                        <th>Кількість</th>
+                        <th>Останнє оновлення</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.StockItems.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                                Товар відсутній у комірках зберігання.
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var s in Model.StockItems)
+                    {
+                        var loc = s.StorageLocation;
+                        var zone = loc?.StorageZone;
+                        var wh = zone?.Warehouse;
+
+                        <tr>
+                            <td style="color: #fff; font-weight: 500;">@(wh?.Name ?? "-")</td>
+                            <td><span class="badge-custom badge-blue">@(zone?.Name ?? "-")</span></td>
+                            <td>
+                                <span class="sku-badge" style="font-weight: 700; color: #fff;">@(loc?.Code ?? "-")</span>
+                            </td>
+                            <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary);">
+                                @(s.BatchNumber ?? "Стандартна")
+                            </td>
+                            <td style="font-weight: 700; color: #34d399; font-size: 0.95rem;">
+                                @s.Quantity @Model.Unit
+                            </td>
+                            <td style="font-size: 0.75rem; color: var(--text-muted);">
+                                @s.LastUpdatedAt.ToString("dd.MM.yyyy HH:mm")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Supplier & Specs -->
+    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div class="wms-card">
+            <h3 style="margin: 0 0 1rem 0; font-size: 1rem; font-weight: 600; color: #fff;">Постачальник</h3>
+            @if (Model.Supplier != null)
+            {
+                <div style="display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.85rem;">
+                    <div>
+                        <div style="color: var(--text-muted); font-size: 0.75rem;">Компанія:</div>
+                        <div style="color: #fff; font-weight: 600;">@Model.Supplier.Name</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-muted); font-size: 0.75rem;">ЄДРПОУ / ІПН:</div>
+                        <div style="color: var(--text-main); font-family: 'JetBrains Mono', monospace;">@Model.Supplier.TaxNumber</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-muted); font-size: 0.75rem;">Контактна особа:</div>
+                        <div style="color: var(--text-main);">@Model.Supplier.ContactPerson</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-muted); font-size: 0.75rem;">Телефон / Email:</div>
+                        <div style="color: #60a5fa;">@Model.Supplier.Phone</div>
+                        <div style="color: var(--text-secondary);">@Model.Supplier.Email</div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Постачальника не закріплено.</p>
+            }
+        </div>
+
+        <div class="wms-card">
+            <h3 style="margin: 0 0 0.75rem 0; font-size: 1rem; font-weight: 600; color: #fff;">Технічні характеристики</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">Вага одиниці:</span>
+                    <span style="color: #fff; font-weight: 500;">@Model.WeightKg кг</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">Одиниця виміру:</span>
+                    <span style="color: #fff; font-weight: 500;">@Model.Unit</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">Критичний мінімум:</span>
+                    <span style="color: #f87171; font-weight: 600;">@Model.MinStockThreshold @Model.Unit</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">Дата внесення:</span>
+                    <span style="color: var(--text-muted);">@Model.CreatedAt.ToString("dd.MM.yyyy")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

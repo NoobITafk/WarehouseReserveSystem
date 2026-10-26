@@ -1,0 +1,33 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "${ASPNETCORE_ENVIRONMENT:-Production}"
+      DATABASE_PROVIDER: "${DATABASE_PROVIDER:-PostgreSQL}"
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-warehousedb};Username=${POSTGRES_USER:-warehouseuser};Password=${POSTGRES_PASSWORD:-WarehouseSecure2026!};Include Error Detail=false"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB:-warehousedb}"
+      POSTGRES_USER: "${POSTGRES_USER:-warehouseuser}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-WarehouseSecure2026!}"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-warehouseuser} -d ${POSTGRES_DB:-warehousedb}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres-data:

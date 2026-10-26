@@ -1,0 +1,55 @@
+@model WarehouseReserveSystem.ViewModels.TransferFormViewModel
+@{
+    ViewData["Title"] = "Внутрішнє переміщення";
+    Layout = "_Layout";
+}
+
+<div style="max-width: 760px; margin: 0 auto;">
+    <div style="margin-bottom: 1.5rem;">
+        <a asp-action="Index" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">← До журналу накладних</a>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0.5rem 0 0.25rem 0;">Внутрішнє переміщення між адресами</h1>
+        <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Ротація товарно-матеріальних цінностей між стелажами та зонами зберігання</p>
+    </div>
+
+    <div class="wms-card">
+        <form asp-action="Transfer" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; padding: 0.75rem; border-radius: 8px; margin-bottom: 1.25rem;"></div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label asp-for="ProductId" class="wms-label">Товар для переміщення *</label>
+                <select asp-for="ProductId" asp-items="Model.Products" class="wms-input"></select>
+                <span asp-validation-for="ProductId" style="color: #f87171; font-size: 0.8rem;"></span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label asp-for="SourceLocationId" class="wms-label">Звідки (Вихідна комірка) *</label>
+                    <select asp-for="SourceLocationId" asp-items="Model.Locations" class="wms-input"></select>
+                    <span asp-validation-for="SourceLocationId" style="color: #f87171; font-size: 0.8rem;"></span>
+                </div>
+                <div>
+                    <label asp-for="DestinationLocationId" class="wms-label">Куди (Цільова комірка) *</label>
+                    <select asp-for="DestinationLocationId" asp-items="Model.Locations" class="wms-input"></select>
+                    <span asp-validation-for="DestinationLocationId" style="color: #f87171; font-size: 0.8rem;"></span>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label asp-for="Quantity" class="wms-label">Кількість для переміщення *</label>
+                <input asp-for="Quantity" type="number" min="1" class="wms-input" />
+                <span asp-validation-for="Quantity" style="color: #f87171; font-size: 0.8rem;"></span>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label asp-for="Notes" class="wms-label">Підстава / Примітки (ротація, комплектація замовлення)</label>
+                <input asp-for="Notes" class="wms-input" placeholder="Планова ротація палет..." />
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                <a asp-action="Index" class="btn-wms-outline">Скасувати</a>
+                <button type="submit" class="btn-wms-primary">Зафіксувати переміщення</button>
+            </div>
+        </form>
+    </div>
+</div>

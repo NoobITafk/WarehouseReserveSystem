@@ -1,0 +1,99 @@
+@model IReadOnlyList<WarehouseReserveSystem.Models.AuditLog>
+@{
+    ViewData["Title"] = "Журнал аудиту безпеки та операцій";
+    Layout = "_Layout";
+    int currentPage = ViewBag.Page ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int totalItems = ViewBag.TotalItems ?? 0;
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.25rem 0;">Журнал аудиту безпеки та дій користувачів</h1>
+        <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Незмінний аудит-трейл (Audit Trail): фіксація авторизацій, транзакцій та змін статусів</p>
+    </div>
+
+    <div style="font-size: 0.85rem; color: var(--text-secondary); background: var(--bg-card-subtle); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+        Зафіксовано подій: <strong style="color: #fff;">@totalItems</strong>
+    </div>
+</div>
+
+<div class="wms-card" style="padding: 0; overflow: hidden; margin-bottom: 1.5rem;">
+    <div style="overflow-x: auto;">
+        <table class="wms-table">
+            <thead>
+                <tr>
+                    <th>Час (UTC)</th>
+                    <th>Дія (Action)</th>
+                    <th>Об'єкт</th>
+                    <th>Ідентифікатор</th>
+                    <th>Користувач</th>
+                    <th>IP-адреса</th>
+                    <th>Деталі події</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                            Записів аудиту не виявлено.
+                        </td>
+                    </tr>
+                }
+                @foreach (var log in Model)
+                {
+                    var isLoginFail = log.Action == "LoginFailed";
+                    var isSuccess = log.Action == "LoginSuccess" || log.Action.StartsWith("Stock");
+
+                    <tr>
+                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap;">
+                            @log.CreatedAt.ToString("dd.MM.yyyy HH:mm:ss")
+                        </td>
+                        <td>
+                            <span class="badge-custom @(isLoginFail ? "badge-rose" : isSuccess ? "badge-emerald" : "badge-blue")" style="font-size: 0.7rem;">
+                                @log.Action
+                            </span>
+                        </td>
+                        <td style="color: #fff; font-weight: 500; font-size: 0.85rem;">
+                            @log.EntityName
+                        </td>
+                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #93c5fd;">
+                            @(log.EntityId ?? "-")
+                        </td>
+                        <td>
+                            <strong style="color: #fff; font-size: 0.85rem;">@log.StaffLogin</strong>
+                        </td>
+                        <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted);">
+                            @(log.IpAddress ?? "127.0.0.1")
+                        </td>
+                        <td style="font-size: 0.85rem; color: var(--text-main);">
+                            @log.Details
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (totalPages > 1)
+{
+    <div style="display: flex; justify-content: center; gap: 0.5rem; align-items: center;">
+        @if (currentPage > 1)
+        {
+            <a asp-action="Index" asp-route-page="@(currentPage - 1)" class="btn-wms-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+                ← Попередня
+            </a>
+        }
+        <span style="font-size: 0.85rem; color: var(--text-secondary); padding: 0 0.5rem;">
+            Сторінка @(currentPage) з @totalPages
+        </span>
+        @if (currentPage < totalPages)
+        {
+            <a asp-action="Index" asp-route-page="@(currentPage + 1)" class="btn-wms-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+                Наступна →
+            </a>
+        }
+    </div>
+}

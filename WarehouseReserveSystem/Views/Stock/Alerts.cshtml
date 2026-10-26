@@ -1,0 +1,98 @@
+@model IReadOnlyList<WarehouseReserveSystem.Services.ProductStockSummary>
+@{
+    ViewData["Title"] = "Дефіцит товарів (Критичні залишки)";
+    Layout = "_Layout";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+            <a asp-action="Index" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">← До відомості залишків</a>
+        </div>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.25rem 0; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="color: #f87171;">Критичний дефіцит запасів</span>
+            <span class="badge-custom badge-rose">@Model.Count SKU</span>
+        </h1>
+        <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Товари, фактичний залишок яких впав нижче встановленої норми незнижуваного запасу</p>
+    </div>
+
+    @if (User.IsInRole("Admin") || User.IsInRole("Storekeeper"))
+    {
+        <a asp-controller="Movements" asp-action="Receipt" class="btn-wms-emerald">
+            + Оформити прибуткову накладну
+        </a>
+    }
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="alert-banner-emerald" style="padding: 2.5rem; text-align: center;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 0.75rem;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <h3 style="margin: 0 0 0.5rem 0; color: #fff; font-size: 1.2rem;">Дефіцит відсутній!</h3>
+        <p style="margin: 0; color: #6ee7b7; font-size: 0.9rem;">Всі товарні позиції забезпечені залишками вище мінімального критичного порогу.</p>
+    </div>
+}
+else
+{
+    <div class="wms-card" style="padding: 0; overflow: hidden;">
+        <div style="overflow-x: auto;">
+            <table class="wms-table">
+                <thead>
+                    <tr>
+                        <th>Артикул (SKU)</th>
+                        <th>Найменування товару</th>
+                        <th>Категорія</th>
+                        <th>Фактичний залишок</th>
+                        <th>Критичний мінімум</th>
+                        <th>Дефіцит</th>
+                        <th>Орієнтовна вартість дозамовлення</th>
+                        <th style="text-align: right;">Дія</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var deficit = item.MinThreshold - item.CurrentStock;
+                        var replenishCost = deficit > 0 ? deficit * item.CostPrice : 0m;
+
+                        <tr>
+                            <td>
+                                <span class="sku-badge">@item.Sku</span>
+                            </td>
+                            <td>
+                                <a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId" style="color: #fff; font-weight: 600; text-decoration: none;">
+                                    @item.Name
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge-custom badge-blue">@item.CategoryName</span>
+                            </td>
+                            <td>
+                                <span class="badge-custom badge-rose" style="font-weight: 700; font-size: 0.85rem;">
+                                    @item.CurrentStock @item.Unit
+                                </span>
+                            </td>
+                            <td style="color: var(--text-secondary); font-size: 0.85rem;">
+                                @item.MinThreshold @item.Unit
+                            </td>
+                            <td style="color: #f87171; font-weight: 700; font-size: 0.95rem;">
+                                -@deficit @item.Unit
+                            </td>
+                            <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #60a5fa;">
+                                @replenishCost.ToString("N2") ₴
+                            </td>
+                            <td style="text-align: right;">
+                                @if (User.IsInRole("Admin") || User.IsInRole("Storekeeper"))
+                                {
+                                    <a asp-controller="Movements" asp-action="Receipt" class="btn-wms-emerald" style="padding: 0.3rem 0.65rem; font-size: 0.75rem;">
+                                        Замовити
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — WarehouseReserve WMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <header class="navbar-custom">
+            <div style="max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 2rem;">
+                    <a asp-controller="Home" asp-action="Index" class="brand-badge">
+                        <div class="brand-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                                <line x1="12" y1="22.08" x2="12" y2="12"/>
+                            </svg>
+                        </div>
+                        <span>WarehouseReserve</span>
+                        <span style="font-size: 0.65rem; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 600; text-transform: uppercase;">WMS</span>
+                    </a>
+
+                    <nav style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
+                        <a asp-controller="Home" asp-action="Index" class="nav-link-custom">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            Дашборд
+                        </a>
+                        <a asp-controller="Products" asp-action="Index" class="nav-link-custom">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                            Товари (SKU)
+                        </a>
+                        <a asp-controller="Stock" asp-action="Index" class="nav-link-custom">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="16.5" x2="7.5" y1="9.4" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/></svg>
+                            Залишки
+                        </a>
+                        <a asp-controller="Movements" asp-action="Index" class="nav-link-custom">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                            Накладні
+                        </a>
+                        <a asp-controller="Warehouses" asp-action="Index" class="nav-link-custom">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
+                            Склади
+                        </a>
+                        <a asp-controller="Stock" asp-action="Alerts" class="nav-link-custom" style="color: #fca5a5;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            Дефіцит
+                        </a>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Auditor"))
+                        {
+                            <a asp-controller="Reports" asp-action="Index" class="nav-link-custom">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                Звіти
+                            </a>
+                            <a asp-controller="AuditLogs" asp-action="Index" class="nav-link-custom">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+                                Аудит
+                            </a>
+                        }
+                    </nav>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.85rem; font-weight: 600; color: #fff;">@User.Identity.Name</div>
+                        <span class="badge-custom @(User.IsInRole("Admin") ? "badge-rose" : User.IsInRole("Storekeeper") ? "badge-amber" : "badge-blue")" style="font-size: 0.65rem; padding: 0.1rem 0.45rem;">
+                            @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                        </span>
+                    </div>
+
+                    <form asp-controller="Account" asp-action="Logout" method="post" style="display: inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-wms-outline" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;" title="Вийти">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                            Вихід
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </header>
+    }
+
+    <main style="max-width: 1400px; width: 100%; margin: 1.5rem auto; padding: 0 1.5rem; flex: 1; box-sizing: border-box;">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert-banner-emerald" style="margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <span>@TempData["SuccessMessage"]</span>
+                </div>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert-banner-rose" style="margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span>@TempData["ErrorMessage"]</span>
+                </div>
+            </div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <footer style="border-top: 1px solid var(--border-color); padding: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: auto;">
+        <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>WarehouseReserve WMS · Enterprise Inventory & Logistics Platform v1.0</div>
+            <div>ASP.NET Core 8 · PostgreSQL / SQLite · Clean Architecture</div>
+        </div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

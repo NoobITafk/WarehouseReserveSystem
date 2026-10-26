@@ -1,0 +1,101 @@
+@model WarehouseReserveSystem.Models.Warehouse
+@{
+    ViewData["Title"] = $"Топологія {Model.Code}";
+    Layout = "_Layout";
+    var allLocations = Model.Zones.SelectMany(z => z.Locations).ToList();
+    var occupiedCount = allLocations.Count(l => l.StockItems.Any(s => s.Quantity > 0));
+}
+
+<div style="margin-bottom: 1.5rem;">
+    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+        <a asp-action="Index" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">← До списку складів</a>
+        <span style="color: var(--border-subtle);">/</span>
+        <span class="sku-badge">@Model.Code</span>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0 0 0.25rem 0;">@Model.Name</h1>
+            <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">@Model.Address · Тел: @Model.ContactPhone · Площа: @Model.TotalAreaSqM.ToString("N0") м²</p>
+        </div>
+        <div style="display: flex; gap: 1rem; align-items: center; background: var(--bg-card-subtle); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+            <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                Зайнятість комірок: <strong style="color: #fff;">@occupiedCount / @allLocations.Count</strong>
+            </div>
+            <span class="badge-custom badge-blue">@Model.Zones.Count зон</span>
+        </div>
+    </div>
+</div>
+
+<!-- Zones list -->
+<div style="display: flex; flex-direction: column; gap: 2rem;">
+    @foreach (var zone in Model.Zones)
+    {
+        <div class="wms-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="sku-badge" style="background: rgba(139, 92, 246, 0.15); color: #c4b5fd; border-color: rgba(139, 92, 246, 0.3);">
+                            @zone.Code
+                        </span>
+                        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #fff;">@zone.Name</h3>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">@zone.Description</div>
+                </div>
+                <span class="badge-custom badge-purple">@zone.ZoneType</span>
+            </div>
+
+            <!-- Grid of locations in this zone -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
+                @foreach (var loc in zone.Locations)
+                {
+                    var activeStock = loc.StockItems.Where(s => s.Quantity > 0).ToList();
+                    var isOccupied = activeStock.Count > 0;
+
+                    <div style="background: var(--bg-card-subtle); border: 1px solid @(isOccupied ? "rgba(59, 130, 246, 0.4)" : "var(--border-subtle)"); border-radius: 8px; padding: 0.85rem; display: flex; flex-direction: column; justify-content: space-between; gap: 0.6rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="sku-badge" style="font-size: 0.85rem; font-weight: 700; color: #fff; background: @(isOccupied ? "rgba(59, 130, 246, 0.25)" : "rgba(255, 255, 255, 0.05)");">
+                                @loc.Code
+                            </span>
+                            @if (isOccupied)
+                            {
+                                <span class="badge-custom badge-emerald" style="font-size: 0.65rem;">Зайнята</span>
+                            }
+                            else
+                            {
+                                <span class="badge-custom badge-blue" style="font-size: 0.65rem; background: transparent; color: var(--text-muted); border-color: var(--border-subtle);">Вільна</span>
+                            }
+                        </div>
+
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">
+                            <span>@loc.Aisle · @loc.Rack · @loc.Shelf</span>
+                        </div>
+
+                        @if (isOccupied)
+                        {
+                            <div style="border-top: 1px solid var(--border-color); padding-top: 0.5rem;">
+                                @foreach (var item in activeStock)
+                                {
+                                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;">
+                                        <a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId" style="color: #93c5fd; text-decoration: none; max-width: 170px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            @item.Product?.Name
+                                        </a>
+                                        <strong style="color: #34d399;">@item.Quantity @item.Product?.Unit</strong>
+                                    </div>
+                                    <div style="font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
+                                        Партія: @(item.BatchNumber ?? "Стандарт")
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">
+                                Доступно для оприбуткування (до @loc.MaxWeightKg кг)
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

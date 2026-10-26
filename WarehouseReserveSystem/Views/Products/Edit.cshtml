@@ -1,0 +1,92 @@
+@model WarehouseReserveSystem.ViewModels.ProductFormViewModel
+@{
+    ViewData["Title"] = $"Редагування {Model.Sku}";
+    Layout = "_Layout";
+}
+
+<div style="max-width: 800px; margin: 0 auto;">
+    <div style="margin-bottom: 1.5rem;">
+        <a asp-action="Details" asp-route-id="@Model.Id" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">← До картки товару</a>
+        <h1 style="font-size: 1.6rem; font-weight: 700; color: #fff; margin: 0.5rem 0 0.25rem 0;">Редагування товару: @Model.Name</h1>
+    </div>
+
+    <div class="wms-card">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; padding: 0.75rem; border-radius: 8px; margin-bottom: 1.25rem;"></div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label asp-for="Sku" class="wms-label">Артикул (SKU) *</label>
+                    <input asp-for="Sku" class="wms-input" />
+                    <span asp-validation-for="Sku" style="color: #f87171; font-size: 0.8rem;"></span>
+                </div>
+                <div>
+                    <label asp-for="Barcode" class="wms-label">Штрих-код (EAN-13) *</label>
+                    <input asp-for="Barcode" class="wms-input" />
+                    <span asp-validation-for="Barcode" style="color: #f87171; font-size: 0.8rem;"></span>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label asp-for="Name" class="wms-label">Найменування товару *</label>
+                <input asp-for="Name" class="wms-input" />
+                <span asp-validation-for="Name" style="color: #f87171; font-size: 0.8rem;"></span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label asp-for="CategoryId" class="wms-label">Категорія *</label>
+                    <select asp-for="CategoryId" asp-items="Model.Categories" class="wms-input"></select>
+                </div>
+                <div>
+                    <label asp-for="SupplierId" class="wms-label">Постачальник</label>
+                    <select asp-for="SupplierId" asp-items="Model.Suppliers" class="wms-input">
+                        <option value="">Не закріплено</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label asp-for="CostPrice" class="wms-label">Собівартість, грн *</label>
+                    <input asp-for="CostPrice" type="number" step="0.01" class="wms-input" />
+                </div>
+                <div>
+                    <label asp-for="SellingPrice" class="wms-label">Ціна продажу, грн *</label>
+                    <input asp-for="SellingPrice" type="number" step="0.01" class="wms-input" />
+                </div>
+                <div>
+                    <label asp-for="MinStockThreshold" class="wms-label">Критичний залишок *</label>
+                    <input asp-for="MinStockThreshold" type="number" class="wms-input" />
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; align-items: center;">
+                <div>
+                    <label asp-for="Unit" class="wms-label">Одиниця виміру *</label>
+                    <input asp-for="Unit" class="wms-input" />
+                </div>
+                <div>
+                    <label asp-for="WeightKg" class="wms-label">Вага (кг)</label>
+                    <input asp-for="WeightKg" type="number" step="0.01" class="wms-input" />
+                </div>
+                <div style="padding-top: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <input asp-for="IsActive" type="checkbox" id="isActive" style="accent-color: var(--primary); width: 16px; height: 16px;" />
+                    <label for="isActive" style="color: var(--text-main); font-size: 0.85rem; cursor: pointer;">Товар активний</label>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label asp-for="Description" class="wms-label">Опис</label>
+                <textarea asp-for="Description" rows="3" class="wms-input"></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn-wms-outline">Скасувати</a>
+                <button type="submit" class="btn-wms-primary">Зберегти зміни</button>
+            </div>
+        </form>
+    </div>
+</div>
