@@ -75,9 +75,12 @@ public class InventoryService(ApplicationDbContext context, IAuditService auditS
 
     public async Task<decimal> GetTotalValuationAsync()
     {
-        return await context.StockItems
-            .Include(s => s.Product)
-            .SumAsync(s => s.Quantity * (s.Product != null ? s.Product.CostPrice : 0m));
+        var items = await context.StockItems
+            .AsNoTracking()
+            .Select(s => new { s.Quantity, CostPrice = s.Product != null ? s.Product.CostPrice : 0m })
+            .ToListAsync();
+
+        return items.Sum(s => s.Quantity * s.CostPrice);
     }
 
     public async Task<int> GetTotalUnitsCountAsync()

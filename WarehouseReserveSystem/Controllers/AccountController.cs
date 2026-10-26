@@ -77,6 +77,44 @@ public class AccountController(DemoUserService demoUserService, IAuditService au
     }
 
     [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DemoLogin(string role)
+    {
+        var demoCredential = DemoCredentials.Staff.FirstOrDefault(s => s.Role.Equals(role, StringComparison.OrdinalIgnoreCase))
+            ?? DemoCredentials.Staff.First();
+
+        var staff = await demoUserService.ValidateUserAsync(demoCredential.Login, demoCredential.Password);
+        if (staff is null)
+        {
+            return RedirectToAction(nameof(Login));
+        }
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, staff.Id.ToString()),
+            new(ClaimTypes.Name, staff.Login),
+            new(ClaimTypes.GivenName, staff.FullName),
+            new(ClaimTypes.Email, staff.Email),
+            new(ClaimTypes.Role, staff.Role)
+        };
+
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity),
+            new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8)
+            });
+
+        await auditService.LogAsync("DemoLogin", "Account", staff.Id.ToString(), $"Швидкий демо-вхід: {staff.FullName} ({staff.Role})");
+
+        return RedirectToAction("Index", "Home");
+    }
+
+    [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
