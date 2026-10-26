@@ -18,9 +18,11 @@
 
     @if (User.IsInRole("Admin") || User.IsInRole("Storekeeper"))
     {
-        <a asp-controller="Movements" asp-action="Receipt" class="btn-wms-emerald">
-            + Оформити прибуткову накладну
-        </a>
+        <div class="btn-group-responsive">
+            <a asp-controller="Movements" asp-action="Receipt" class="btn-wms-emerald">
+                + Оформити прибуткову накладну
+            </a>
+        </div>
     }
 </div>
 
@@ -35,7 +37,7 @@
 else
 {
     <div class="wms-card" style="padding: 0; overflow: hidden;">
-        <div style="overflow-x: auto;">
+        <div class="table-responsive">
             <table class="wms-table">
                 <thead>
                     <tr>
@@ -81,7 +83,7 @@ else
                             <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #60a5fa;">
                                 @replenishCost.ToString("N2") ₴
                             </td>
-                            <td style="text-align: right;">
+                            <td class="actions-cell">
                                 @if (User.IsInRole("Admin") || User.IsInRole("Storekeeper"))
                                 {
                                     <a asp-controller="Movements" asp-action="Receipt" class="btn-wms-emerald" style="padding: 0.3rem 0.65rem; font-size: 0.75rem;">

@@ -163,7 +163,7 @@ cd C:\Project\WarehouseReserveSystem
 docker-compose up -d --build
 ```
 
-Додаток буде доступний за адресою: **`http://localhost:8080`**
+Додаток буде доступний за адресою: **`http://localhost:8090`** (або на IP VPS `http://152.70.19.219:8090`)
 
 ---
 

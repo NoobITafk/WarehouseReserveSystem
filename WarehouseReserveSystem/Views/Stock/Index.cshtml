@@ -17,7 +17,7 @@
         <p style="color: var(--text-secondary); margin: 0; font-size: 0.85rem;">Оборотно-сальдова відомість у розрізі адресних комірок та серійних партій</p>
     </div>
 
-    <div style="display: flex; gap: 0.75rem;">
+    <div class="btn-group-responsive">
         <a asp-controller="Reports" asp-action="ExportStockBalancesCsv" class="btn-wms-outline">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Експорт у CSV (Excel)
@@ -68,7 +68,7 @@
 </div>
 
 <!-- Totals Strip -->
-<div style="display: flex; gap: 2rem; margin-bottom: 1.25rem; font-size: 0.9rem; background: var(--bg-card-subtle); padding: 0.75rem 1.25rem; border-radius: 8px; border: 1px solid var(--border-color);">
+<div style="display: flex; gap: 2rem; margin-bottom: 1.25rem; font-size: 0.9rem; background: var(--bg-card-subtle); padding: 0.75rem 1.25rem; border-radius: 8px; border: 1px solid var(--border-color); flex-wrap: wrap;">
     <div>Знайдено записів: <strong style="color: #fff;">@Model.Count</strong></div>
     <div>Всього одиниць: <strong style="color: #34d399;">@totalUnits.ToString("N0") од.</strong></div>
     <div>Балансова вартість: <strong style="color: #60a5fa;">@totalValuation.ToString("N2") грн</strong></div>
@@ -76,7 +76,7 @@
 
 <!-- Stock Table -->
 <div class="wms-card" style="padding: 0; overflow: hidden;">
-    <div style="overflow-x: auto;">
+    <div class="table-responsive">
         <table class="wms-table">
             <thead>
                 <tr>

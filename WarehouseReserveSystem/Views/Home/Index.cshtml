@@ -104,10 +104,10 @@
 </div>
 
 <!-- Two Column Layout -->
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; align-items: flex-start;">
+<div class="dashboard-grid">
     <!-- Left Column: Recent Movements -->
     <div class="wms-card" style="padding: 0; overflow: hidden;">
-        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
             <div>
                 <h3 style="margin: 0; font-size: 1.05rem; font-weight: 600; color: #fff;">Останній рух товарно-матеріальних цінностей</h3>
                 <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: var(--text-secondary);">Прибуткові, видаткові накладні та переміщення</p>
@@ -117,7 +117,7 @@
             </a>
         </div>
 
-        <div style="overflow-x: auto;">
+        <div class="table-responsive">
             <table class="wms-table">
                 <thead>
                     <tr>
@@ -126,7 +126,7 @@
                         <th>Контрагент / Маршрут</th>
                         <th>Кількість</th>
                         <th>Співробітник</th>
-                        <th>Дії</th>
+                        <th style="text-align: right;">Дії</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -151,7 +151,7 @@
                         var totalQty = m.Items.Sum(i => i.Quantity);
 
                         <tr>
-                            <td>
+                            <td style="white-space: nowrap;">
                                 <a asp-controller="Movements" asp-action="Details" asp-route-id="@m.Id" style="color: #93c5fd; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; text-decoration: none;">
                                     @m.DocumentNumber
                                 </a>
@@ -178,14 +178,14 @@
                                     <span style="color: #f87171;">@m.Reason</span>
                                 }
                             </td>
-                            <td style="font-weight: 600; color: #fff;">
+                            <td style="font-weight: 600; color: #fff; white-space: nowrap;">
                                 @totalQty од.
                             </td>
-                            <td>
+                            <td style="white-space: nowrap;">
                                 <span style="font-size: 0.8rem; color: var(--text-secondary);">@m.StaffLogin</span>
                             </td>
-                            <td>
-                                <a asp-controller="Movements" asp-action="Pdf" asp-route-id="@m.Id" class="btn-wms-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Завантажити PDF накладну">
+                            <td class="actions-cell">
+                                <a asp-controller="Movements" asp-action="Pdf" asp-route-id="@m.Id" class="btn-wms-outline" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;" title="Завантажити PDF накладну">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="12" y2="18"/><line x1="15" y1="15" x2="12" y2="18"/></svg>
                                     PDF
                                 </a>

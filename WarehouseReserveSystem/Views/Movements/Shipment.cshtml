@@ -22,7 +22,7 @@
                 <span asp-validation-for="CustomerName" style="color: #f87171; font-size: 0.8rem;"></span>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="form-grid-2">
                 <div>
                     <label asp-for="ProductId" class="wms-label">Товар для відвантаження *</label>
                     <select asp-for="ProductId" asp-items="Model.Products" class="wms-input"></select>
@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="form-grid-2">
                 <div>
                     <label asp-for="Quantity" class="wms-label">Кількість для відвантаження *</label>
                     <input asp-for="Quantity" type="number" min="1" class="wms-input" />
@@ -53,7 +53,7 @@
                 <input asp-for="Notes" class="wms-input" placeholder="Замовлення клієнта №..." />
             </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+            <div class="form-actions-responsive">
                 <a asp-action="Index" class="btn-wms-outline">Скасувати</a>
                 <button type="submit" class="btn-wms-primary">Провести видаткову накладну</button>
             </div>

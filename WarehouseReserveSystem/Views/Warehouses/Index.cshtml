@@ -11,7 +11,7 @@
     </div>
 </div>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem;">
+<div class="cards-grid-auto">
     @foreach (var wh in Model)
     {
         var totalLocs = wh.Zones.SelectMany(z => z.Locations).Count();

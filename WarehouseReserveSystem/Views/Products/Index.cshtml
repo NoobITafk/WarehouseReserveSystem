@@ -55,7 +55,7 @@
 
 <!-- Products Table -->
 <div class="wms-card" style="padding: 0; overflow: hidden;">
-    <div style="overflow-x: auto;">
+    <div class="table-responsive">
         <table class="wms-table">
             <thead>
                 <tr>
@@ -129,14 +129,14 @@
                                 <span class="badge-custom badge-amber">В архіві</span>
                             }
                         </td>
-                        <td style="text-align: right;">
-                            <div style="display: inline-flex; gap: 0.5rem;">
-                                <a asp-action="Details" asp-route-id="@p.Id" class="btn-wms-outline" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;">
+                        <td class="actions-cell">
+                            <div style="display: inline-flex; gap: 0.4rem; justify-content: flex-end;">
+                                <a asp-action="Details" asp-route-id="@p.Id" class="btn-wms-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
                                     Картка
                                 </a>
                                 @if (User.IsInRole("Admin") || User.IsInRole("Storekeeper"))
                                 {
-                                    <a asp-action="Edit" asp-route-id="@p.Id" class="btn-wms-outline" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;">
+                                    <a asp-action="Edit" asp-route-id="@p.Id" class="btn-wms-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">
                                         Ред.
                                     </a>
                                 }

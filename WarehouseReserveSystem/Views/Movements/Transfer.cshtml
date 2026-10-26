@@ -22,7 +22,7 @@
                 <span asp-validation-for="ProductId" style="color: #f87171; font-size: 0.8rem;"></span>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="form-grid-2">
                 <div>
                     <label asp-for="SourceLocationId" class="wms-label">Звідки (Вихідна комірка) *</label>
                     <select asp-for="SourceLocationId" asp-items="Model.Locations" class="wms-input"></select>
@@ -46,7 +46,7 @@
                 <input asp-for="Notes" class="wms-input" placeholder="Планова ротація палет..." />
             </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+            <div class="form-actions-responsive">
                 <a asp-action="Index" class="btn-wms-outline">Скасувати</a>
                 <button type="submit" class="btn-wms-primary">Зафіксувати переміщення</button>
             </div>

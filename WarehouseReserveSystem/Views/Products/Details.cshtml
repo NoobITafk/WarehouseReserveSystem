@@ -26,7 +26,7 @@
 
     @if (User.IsInRole("Admin") || User.IsInRole("Storekeeper"))
     {
-        <div style="display: flex; gap: 0.5rem;">
+        <div class="btn-group-responsive">
             <a asp-controller="Movements" asp-action="Receipt" class="btn-wms-emerald">
                 + Поповнити (Прихід)
             </a>
@@ -38,7 +38,7 @@
 </div>
 
 <!-- 4 Key Numbers -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 1rem; margin-bottom: 2rem;">
     <div class="stat-card">
         <span class="stat-label">Сумарний залишок</span>
         <div class="stat-val" style="color: @(isLowStock ? "#f87171" : "#fff"); margin-top: 0.25rem;">
@@ -75,13 +75,13 @@
 </div>
 
 <!-- Locations table & Supplier info -->
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; align-items: flex-start;">
+<div class="details-grid-layout">
     <div class="wms-card" style="padding: 0; overflow: hidden;">
         <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-color);">
             <h3 style="margin: 0; font-size: 1rem; font-weight: 600; color: #fff;">Адресне розміщення по комірках</h3>
         </div>
 
-        <div style="overflow-x: auto;">
+        <div class="table-responsive">
             <table class="wms-table">
                 <thead>
                     <tr>
