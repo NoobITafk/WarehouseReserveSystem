@@ -1,13 +1,31 @@
 # WarehouseReserveSystem (WMS) — Enterprise Addressable Inventory Management
 
 [![.NET 8](https://img.shields.io/badge/.NET-8.0%20LTS-purple.svg)](https://dotnet.microsoft.com/)
+[![CI](https://github.com/NoobITafk/WarehouseReserveSystem/actions/workflows/ci.yml/badge.svg)](https://github.com/NoobITafk/WarehouseReserveSystem/actions/workflows/ci.yml)
 [![C# 12](https://img.shields.io/badge/C%23-12-blue.svg)](https://learn.microsoft.com/en-us/dotnet/csharp/)
 [![Database](https://img.shields.io/badge/Database-PostgreSQL%2016%20%7C%20SQLite-0064a5.svg)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)
 [![Tests](https://img.shields.io/badge/Tests-12%20Passed-brightgreen.svg)](https://xunit.net/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-warehousereserve.duckdns.org-success.svg)](https://warehousereserve.duckdns.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 Сучасна, повнофункціональна система адресного складського обліку та управління запасами (**WMS — Warehouse Management System**) промислового рівня на стеку **ASP.NET Core 8 (.NET 8 LTS)** та **Entity Framework Core 8**.
+
+---
+
+## 🌐 Живий продакшн (Live Demo)
+
+Система розгорнута на виділеному сервері під керуванням Nginx Reverse Proxy з автоматичним SSL (Let's Encrypt):
+
+🔗 **[https://warehousereserve.duckdns.org](https://warehousereserve.duckdns.org)**
+
+### Демо-доступи:
+
+| Роль | Логін | Пароль | Сфера відповідальності |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin` | `Admin#2026!WMS` | Повний доступ до всіх складів, товарів, персоналу та аудиту |
+| **Storekeeper** | `storekeeper` | `Storekeeper#2026!WMS` | Оприбуткування, відвантаження, внутрішнє переміщення, генерація накладних |
+| **Auditor** | `auditor` | `Auditor#2026!WMS` | Звіти, експорт залишків у CSV, журнал незмінного аудиту |
 
 ---
 

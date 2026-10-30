@@ -19,3 +19,7 @@ obj/
 ## Logs & Temp
 logs/
 *.log
+
+## Portfolio Render Media
+portfolio-video/
+warehousereserve_portfolio_fresh.mp4
