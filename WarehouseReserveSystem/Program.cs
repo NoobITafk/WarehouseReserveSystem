@@ -5,6 +5,7 @@ using WarehouseReserveSystem.Data;
 using WarehouseReserveSystem.Models;
 using WarehouseReserveSystem.Services;
 
+ThreadPool.SetMinThreads(100, 100);
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Database Configuration (PostgreSQL in production/Docker, SQLite in dev fallback)
@@ -85,7 +86,16 @@ builder.Services.AddScoped<IReportExportService, ReportExportService>();
 // 4. Controllers with Views
 builder.Services.AddControllersWithViews();
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 var app = builder.Build();
+
+app.UseForwardedHeaders();
 
 // 5. Database Migration and Seeding
 using (var scope = app.Services.CreateScope())
