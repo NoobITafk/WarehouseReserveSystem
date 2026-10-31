@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /Account/
+
+Sitemap: https://warehousereserve.duckdns.org/sitemap.xml

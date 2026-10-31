@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: warehouse-app
     ports:
-      - "${APP_PORT:-8090}:8080"
+      - "127.0.0.1:${APP_PORT:-8090}:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: "${ASPNETCORE_ENVIRONMENT:-Production}"
       DATABASE_PROVIDER: "${DATABASE_PROVIDER:-PostgreSQL}"
